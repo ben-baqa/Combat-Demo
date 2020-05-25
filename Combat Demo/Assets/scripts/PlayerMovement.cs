@@ -13,7 +13,9 @@ public class PlayerMovement : MonoBehaviour
     private Animator anim;
     private Rigidbody2D rb;
     private Transform tr;
+    //private Sword sword;
 
+    private int lastPressed;
     private bool right, left, up, down, attack, parry, canJump;
 
 
@@ -28,7 +30,9 @@ public class PlayerMovement : MonoBehaviour
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         tr = GetComponent<Transform>();
-        //swordAnim = GetComponentInChildren<Animator>();
+        //sword = GetComponentInChildren<Sword>();
+
+        Physics2D.IgnoreLayerCollision(8, 9, true);
     }
     private void Update()
     {
@@ -51,13 +55,11 @@ public class PlayerMovement : MonoBehaviour
         }
         if (right && rb.velocity.x < maxSpeed)
         {
-            rb.AddForce(Vector2.right * moveForce);
-            CheckTurn();
+            lateralMovement(1);
         }
         if (left && rb.velocity.x > -maxSpeed)
         {
-            rb.AddForce(Vector2.left * moveForce);
-            CheckTurn();
+            lateralMovement(-1);
         }
         if (attack)
         {
@@ -65,6 +67,32 @@ public class PlayerMovement : MonoBehaviour
             attack = false;
         }
     }
+
+    private void lateralMovement(int flip)
+    {
+        lastPressed = flip;
+        rb.AddForce(Vector2.right * moveForce * flip, ForceMode2D.Force);
+        if (rb.velocity.x * flip < 0)
+        {
+            rb.AddForce(Vector2.right * moveForce * flip, ForceMode2D.Force);
+        }
+        if (tr.localScale.x == -flip)
+        {
+            if (canJump)
+            {
+                anim.SetTrigger("turn");
+            }
+            else
+            {
+                FlipCharacter();
+            }
+        }
+        else
+        {
+            anim.ResetTrigger("turn");
+        }
+    }
+
     /// <summary>
     /// Sets various parameters of the player animator
     /// </summary>
@@ -105,15 +133,15 @@ public class PlayerMovement : MonoBehaviour
         up |= GetKeyDowns(upKeyCodes);
         up &= canJump;
         down |= GetKeyDowns(downKeyCodes);
-        attack |= GetKeyDowns(attackKeyCodes);
-        parry |= GetKeyDowns(parryKeyCodes);
+        attack |= GetKeyDowns(attackKeyCodes) | Input.GetMouseButtonDown(0);
+        parry |= GetKeyDowns(parryKeyCodes) | Input.GetMouseButtonDown(1);
 
         right &= GetKeyUps(rightKeyCodes);
         left &= GetKeyUps(leftKeyCodes);
         up &= GetKeyUps(upKeyCodes);
         down &= GetKeyUps(downKeyCodes);
-        attack &= GetKeyUps(attackKeyCodes);
-        parry &= GetKeyUps(parryKeyCodes);
+        attack &= GetKeyUps(attackKeyCodes) & !Input.GetMouseButtonUp(0);
+        parry &= GetKeyUps(parryKeyCodes) & !Input.GetMouseButtonUp(1);
     }
     /// <summary>
     /// returns true if any of the passed keycodes have been pressed
@@ -150,8 +178,29 @@ public class PlayerMovement : MonoBehaviour
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///     Animation Events           ///
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// <summary>
+    /// Called in the jump animation, gives player upward force impulse
+    /// </summary>
     private void Jump()
     {
+        rb.velocity = Vector2.right * rb.velocity.x;
         rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+    }
+    /// <summary>
+    /// Called in the turn animation, turns the player in the correct direction
+    /// </summary>
+    private void FlipCharacter()
+    {
+        if (right && !left)
+        {
+            tr.localScale = new Vector3(1, 1, 1);
+            return;
+        }
+        else if (!right && left)
+        {
+            tr.localScale = new Vector3(-1, 1, 1);
+            return;
+        }
+        tr.localScale = new Vector3(lastPressed, 1, 1);
     }
 }

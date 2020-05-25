@@ -24,14 +24,16 @@ public class CameraFollow : MonoBehaviour
     /// </summary>
     void FixedUpdate()
     {
-        if(offset.magnitude > 0.01)
+        float offsetMod = 20;
+        if (offset.magnitude > 0.01)
         {
             offset *= offsetDecayFactor;
+            offsetMod = 1 / (Mathf.Abs(offset.y) + 0.01f);
         }
         Vector3 camPos = cam.position, pPos = player.transform.position;
         cam.position = new Vector3
             (camPos.x - (camPos.x - pPos.x) / xMod + offset.x,
             camPos.y - (camPos.y - pPos.y - (float)0.1) / (yMod / (1 + Mathf.Pow((player.GetComponent<Rigidbody2D>().velocity.y
-            + 1 / (Mathf.Abs(offset.y) + 0.01f)) / 4,2))) + offset.y, -10);
+            + offsetMod) / 4,2))) + offset.y, -10);
     }
 }
