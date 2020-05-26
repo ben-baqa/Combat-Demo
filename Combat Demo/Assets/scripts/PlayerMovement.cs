@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
 
     public float moveForce, jumpForce, maxSpeed;
     public string[] rightKeyCodes, leftKeyCodes, upKeyCodes, downKeyCodes, attackKeyCodes, parryKeyCodes;
+    public int health, healthMax;
 
     private Animator anim;
     private Rigidbody2D rb;

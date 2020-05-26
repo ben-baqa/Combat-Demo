@@ -116,7 +116,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 1
     messageOptions: 0
-  - time: 0.2857143
+  - time: 0.35714287
     functionName: ActivateDamageBox
     data: 
     objectReferenceParameter: {fileID: 0}
