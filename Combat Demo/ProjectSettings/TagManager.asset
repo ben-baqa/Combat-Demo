@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - Parry
+  - Enemy Attack
+  - Player Attack
+  - Interactable
   layers:
   - Default
   - TransparentFX

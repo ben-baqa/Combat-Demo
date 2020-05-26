@@ -4,42 +4,123 @@ using UnityEngine;
 
 public class EnemyBehavior : MonoBehaviour
 {
-    public GameObject deathBurst;
+    public Vector2 jumpForce;
 
-    public int healthMax, health;
+    public int attackDelay, attackTimer;
+    public bool contact, parryable;
 
     private Animator anim;
+    private Rigidbody2D rb;
+    private Transform pPos;
 
     enum type {slime}
 
     void Start()
     {
         anim = GetComponent<Animator>();
-        health = healthMax;
+        rb = GetComponent<Rigidbody2D>();
+        pPos = GameObject.Find("Player").transform;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        anim.SetFloat("vY", rb.velocity.y);
     }
-
-    public void GetHit()
+    private void FixedUpdate()
     {
-        anim.SetTrigger("oof");
-        health--;
-        if(health <= 0)
+        AttackLoop();
+    }
+    /// <summary>
+    /// Runs the main attack loop
+    /// </summary>
+    private void AttackLoop()
+    {
+        if (attackTimer > attackDelay)
         {
-            OnDeath();
+            attackTimer = 0;
+            anim.SetTrigger("attack");
+        }
+        else
+        {
+            attackTimer++;
+        }
+        if (pPos != null && pPos.position.x > transform.position.x)
+        {
+            transform.localScale = new Vector2(1, 1);
+        }
+        else
+        {
+            transform.localScale = new Vector2(-1, 1);
         }
     }
 
-    private void OnDeath()
+
+    /// <summary>
+    /// Removes time slow after a given time delay
+    /// </summary>
+    /// <param name="time">how long the time slow should last</param>
+    /// <returns></returns>
+    IEnumerator CancelBulletTime(float time)
     {
-        if(deathBurst != null)
+        yield return new WaitForSeconds(time);
+        Time.timeScale = 1;
+    }
+
+    public void OnHit(float time)
+    {
+        StartCoroutine(CancelBulletTime(time));
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///     Animation Events           ///
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// <summary>
+    /// Called in jump animation, applies force
+    /// </summary>
+    private void Jump()
+    {
+        Vector2 v = jumpForce;
+        v.x *= transform.localScale.x;
+        rb.AddForce(v, ForceMode2D.Impulse);
+    }
+    ///// <summary>
+    ///// Called in attack animation, specifies activates damage hitbox
+    ///// </summary>
+    ///// <param name="n">the index of the damage box to activate</param>
+    //private void ActivateDamageBox(int n)
+    //{
+    //    DamageBox[n].SetActive(true);
+    //}
+    ///// <summary>
+    ///// Called at the end of an attack animation, deactivates all damaging hitboxes
+    ///// </summary>
+    //private void DeactivateDamageBoxes()
+    //{
+    //    foreach(GameObject g in DamageBox)
+    //    {
+    //        g.SetActive(false);
+    //    }
+    //}
+    /// <summary>
+    /// Called at the start of an attack animation, resets contact variable so player is only hit once
+    /// </summary>
+    private void startAttack()
+    {
+        contact = false;
+    }
+    /// <summary>
+    /// Called in attack animation, sets wether or not the enemy can currently be parried
+    /// </summary>
+    /// <param name="i"></param>
+    private void setParryable(int i)
+    {
+        if (i == 0)
         {
-            Instantiate(deathBurst, transform.position, Quaternion.identity);
-            Destroy(gameObject);
+            parryable = false;
+        }
+        else
+        {
+            parryable = true;
         }
     }
 }

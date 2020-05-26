@@ -6,81 +6,156 @@ public class Sword : MonoBehaviour
 {
     public Camera cam;
     public Vector2[] cameraShakeOffsets;
-    public GameObject player;
-    public GameObject[] swingChecker;
 
-    public float timeSlowAmount;
+    public float timeSlowAmount, parrySlowAmount;
+    public int damage, healthRestoredOnParry;
     public bool contact;
 
+    private GameObject player;
     private Animator anim;
     private SpriteRenderer sprite;
+    private PlayerMovement pMov;
+    private Health playerHealth;
     private Vector2 pScale;
 
     void Start()
     {
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
+        player = GameObject.Find("Player");
+        pMov = player.GetComponent<PlayerMovement>();
+        playerHealth = player.GetComponentInChildren<Health>();
     }
 
     private void FixedUpdate()
     {
+        if(pMov == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
         if(transform.parent == null)
         {
             transform.position = new Vector2(player.transform.position.x, player.transform.position.y + 0.8f);
         }
     }
-
-    private void ResetTrigger()
-    {
-        anim.ResetTrigger("attack");
-    }
-
+    /// <summary>
+    /// Applies an offset to the camera position to make screen shake
+    /// </summary>
+    /// <param name="n">which inspector defined vector to apply as offset</param>
     private void CameraShake(int n)
     {
-        cam.GetComponent<CameraFollow>().offset = cameraShakeOffsets[n];
+        cam.GetComponent<CameraFollow>().offset = cameraShakeOffsets[n] * Time.timeScale;
     }
-
+    /// <summary>
+    /// Called in DamageEnemies when a swing hits something hittable, slows time and changes sword colour
+    /// </summary>
+    public void OnHit()
+    {
+        contact = true;
+        sprite.color = new Color(1, 0.1f, 0);
+        Time.timeScale = 0.3f;
+        StartCoroutine(CancelBulletTime(timeSlowAmount));
+    }
+    /// <summary>
+    /// Removes time slow after a given time delay
+    /// </summary>
+    /// <param name="time">how long the time slow should last</param>
+    /// <returns></returns>
+    IEnumerator CancelBulletTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        Time.timeScale = 1;
+    }
+    /// <summary>
+    /// Called on a successfull parry
+    /// </summary>
+    public void OnParry()
+    {
+        contact = true;
+        sprite.color = new Color(1, 1, 0);
+        Time.timeScale = 0.3f;
+        anim.speed = 5;
+        playerHealth.health += healthRestoredOnParry;
+        playerHealth.UpdateHealthBar();
+        StartCoroutine(CancelParryTime());
+    }
+    /// <summary>
+    /// Cancels slow time cuased by parrying
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator CancelParryTime()
+    {
+        yield return new WaitForSeconds(parrySlowAmount);
+        anim.speed = 1;
+        Time.timeScale = 1;
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///     Animation Events           ///
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// <summary>
+    /// Called at the start of a sword swing, detaches sword from parent transform
+    /// </summary>
     private void startSwing()
     {
         transform.parent = null;
         contact = false;
     }
-
+    /// <summary>
+    /// Called at the end of a sword swing, resets parent connection
+    /// </summary>
     private void endSwing()
     {
         sprite.color = Color.white;
-        transform.parent = player.transform;
+        if (player != null)
+        {
+            transform.parent = player.transform;
+        }
         transform.localPosition = new Vector2(0, 0.8f);
         transform.localScale = new Vector2(1, 1);
     }
-
-    private void ActivateDamageBox(int n)
+    /// <summary>
+    /// Activates a numbered gameobject that detects hits on a certain frame
+    /// </summary>
+    ///// <param name="n">the index of the hitbox to trigger</param>
+    //private void ActivateDamageBox(int n)
+    //{
+    //    foreach(GameObject g in swingChecker)
+    //    {
+    //        g.SetActive(false);
+    //    }
+    //    swingChecker[n].SetActive(true);
+    //}
+    ///// <summary>
+    ///// deactivates all sword hitboxes;
+    ///// </summary>
+    //private void DeactivateDamageBoxes()
+    //{
+    //    foreach (GameObject g in swingChecker)
+    //    {
+    //        g.SetActive(false);
+    //    }
+    //}
+    /// <summary>
+    /// Called in attack animations to prevent one input press from triggering multiple attacks
+    /// </summary>
+    private void ResetTrigger()
     {
-        foreach(GameObject g in swingChecker)
+        anim.ResetTrigger("attack");
+    }
+    /// <summary>
+    /// Prevents overlayins parry swings
+    /// </summary>
+    /// <param name="i"></param>
+    private void EnableParry(int i)
+    {
+        if(i == 0)
         {
-            g.SetActive(false);
+            anim.SetBool("canParry", false);
         }
-        swingChecker[n].SetActive(true);
-    }
-
-    private void DeactivateDamageBoxes()
-    {
-        foreach (GameObject g in swingChecker)
+        else
         {
-            g.SetActive(false);
+            anim.SetBool("canParry", true);
         }
-    }
-
-    public void OnHit()
-    {
-        Debug.Log("Time Slowed");
-        sprite.color = new Color(1, 0.1f, 0);
-        Time.timeScale = 0.3f;
-        StartCoroutine(CancelBulletTime(timeSlowAmount));
-    }
-    IEnumerator CancelBulletTime(float time)
-    {
-        yield return new WaitForSeconds(time);
-        Time.timeScale = 1;
     }
 }

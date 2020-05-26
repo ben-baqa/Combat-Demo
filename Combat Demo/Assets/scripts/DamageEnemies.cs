@@ -26,7 +26,7 @@ public class DamageEnemies : MonoBehaviour
             enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(pPos.localScale.x * hitForce.x, hitForce.y), ForceMode2D.Impulse);
             if (!sword.contact)
             {
-                enemy.GetComponent<EnemyBehavior>().GetHit();
+                enemy.GetComponent<Health>().GetHit(sword.damage);
                 if(burst != null)
                 {
                     GameObject burstInst = Instantiate(burst, transform.position, Quaternion.identity);
@@ -35,7 +35,6 @@ public class DamageEnemies : MonoBehaviour
                 }
                 sword.OnHit();
             }
-            sword.contact = true;
         }
     }
 }

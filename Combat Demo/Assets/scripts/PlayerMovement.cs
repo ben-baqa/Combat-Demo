@@ -9,7 +9,6 @@ public class PlayerMovement : MonoBehaviour
 
     public float moveForce, jumpForce, maxSpeed;
     public string[] rightKeyCodes, leftKeyCodes, upKeyCodes, downKeyCodes, attackKeyCodes, parryKeyCodes;
-    public int health, healthMax;
 
     private Animator anim;
     private Rigidbody2D rb;
@@ -44,6 +43,13 @@ public class PlayerMovement : MonoBehaviour
         RunAnimator();
         ExecuteControls();
     }
+    private void OnDestroy()
+    {
+        foreach(Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
+    }
     /// <summary>
     /// Runs the Logic of the controls using obtained input
     /// </summary>
@@ -67,8 +73,16 @@ public class PlayerMovement : MonoBehaviour
             swordAnim.SetTrigger("attack");
             attack = false;
         }
+        if (parry)
+        {
+            swordAnim.SetTrigger("parry");
+            parry = false;
+        }
     }
-
+    /// <summary>
+    /// Moves the player laterally in wither the positive or negative direction
+    /// </summary>
+    /// <param name="flip">1 or -1 depending on if inout is left or right</param>
     private void lateralMovement(int flip)
     {
         lastPressed = flip;
@@ -79,21 +93,9 @@ public class PlayerMovement : MonoBehaviour
         }
         if (tr.localScale.x == -flip)
         {
-            if (canJump)
-            {
-                anim.SetTrigger("turn");
-            }
-            else
-            {
                 FlipCharacter();
-            }
-        }
-        else
-        {
-            anim.ResetTrigger("turn");
         }
     }
-
     /// <summary>
     /// Sets various parameters of the player animator
     /// </summary>
@@ -111,18 +113,6 @@ public class PlayerMovement : MonoBehaviour
             canJump = false;
         }
         swordAnim.SetBool("air", !canJump);
-    }
-
-    private void CheckTurn()
-    {
-        if (rb.velocity.x > 0)
-        {
-            tr.localScale = new Vector2(1, 1);
-        }
-        else
-        {
-            tr.localScale = new Vector2(-1, 1);
-        }
     }
     /// <summary>
     /// gets the values of all inputs
