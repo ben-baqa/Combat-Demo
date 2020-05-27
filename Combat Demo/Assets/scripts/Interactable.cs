@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Interactable : MonoBehaviour
 {
+
     public GameObject thingToSpawn;
 
     private Animator anim;
@@ -40,9 +41,12 @@ public class Interactable : MonoBehaviour
     /// <summary>
     /// Spawns the thing, called in trigger animation
     /// </summary>
-    private void SpawnThing()
+    private void SpawnThing(int n)
     {
-        Vector2 spawnPosition = new Vector2(Random.Range(25, 35), Random.Range(0, -3));
-        Instantiate(thingToSpawn, spawnPosition, Quaternion.identity);
+        for (int i = 0; i < n; i++)
+        {
+            Vector2 spawnPosition = new Vector2(Random.Range(25, 35), Random.Range(0, -3));
+            Instantiate(thingToSpawn, spawnPosition, Quaternion.identity);
+        }
     }
 }

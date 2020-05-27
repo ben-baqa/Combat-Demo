@@ -4825,3 +4825,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3efeede277707643bb40eb9c5dc3c7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemToSpawn: {fileID: 5804320024068793765, guid: cef7ec709435f2644a6f88343ffe2496,
+    type: 3}
+  numberToSpawn: 2

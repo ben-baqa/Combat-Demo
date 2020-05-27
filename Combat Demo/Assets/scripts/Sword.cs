@@ -5,19 +5,22 @@ using UnityEngine;
 public class Sword : MonoBehaviour
 {
     public Camera cam;
-    public List<GameObject> enemiesAlreadyDamagedInSwing, enemiesAlreadyParriedInSwing;
+    public GameObject slamCast;
     public Vector2[] cameraShakeOffsets;
 
     public float timeSlowAmount, parrySlowAmount;
-    public int damage, healthRestoredOnParry;
+    public int damage, healthRestoredOnParry, slamDamageMod;
     public bool contact;
 
+    private List<GameObject> enemiesAlreadyDamagedInSwing, enemiesAlreadyParriedInSwing;
     private GameObject player;
     private Animator anim;
     private SpriteRenderer sprite;
     private PlayerMovement pMov;
     private Health playerHealth;
     private Vector2 pScale;
+
+    private int normalDamage;
 
     void Start()
     {
@@ -28,6 +31,7 @@ public class Sword : MonoBehaviour
         playerHealth = player.GetComponentInChildren<Health>();
         enemiesAlreadyDamagedInSwing = new List<GameObject>();
         enemiesAlreadyParriedInSwing = new List<GameObject>();
+        normalDamage = damage;
     }
 
     private void FixedUpdate()
@@ -71,18 +75,29 @@ public class Sword : MonoBehaviour
         Time.timeScale = 1;
     }
     /// <summary>
-    /// Called on a successfull parry
+    /// Called on a successfull parry, ensures each enmy can only be parried once per swing
     /// </summary>
     public void OnParry(GameObject enemy)
     {
-        contact = true;
-        sprite.color = new Color(1, 1, 0);
-        Time.timeScale = 0.3f;
-        anim.speed = 5;
-        playerHealth.health += healthRestoredOnParry;
-        playerHealth.UpdateHealthBar();
-        ParryEnemy(enemy);
-        StartCoroutine(CancelParryTime());
+        bool parryEnemy = true;
+        foreach (GameObject e in enemiesAlreadyParriedInSwing)
+        {
+            if (e.Equals(enemy))
+            {
+                parryEnemy = false;
+            }
+        }
+        if (parryEnemy)
+        {
+            sprite.color = new Color(1, 1, 0);
+            Time.timeScale = 0.3f;
+            StartCoroutine(CancelParryTime());
+            anim.speed = 5;
+            playerHealth.health += healthRestoredOnParry;
+            playerHealth.UpdateHealthBar();
+            enemy.GetComponent<EnemyBehavior>().GetParried();
+            enemiesAlreadyParriedInSwing.Add(enemy);
+        }
     }
     /// <summary>
     /// Cancels slow time cuased by parrying
@@ -114,26 +129,37 @@ public class Sword : MonoBehaviour
             enemiesAlreadyDamagedInSwing.Add(enemy);
         }
     }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///     Store Buttons           ///
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// <summary>
-    /// Callled when a parry stroke contacts an enemy, ensures each enemy is only parried once
+    /// Called by store UI, upgrades attack
     /// </summary>
-    /// <param name="enemy">the enemy to parry</param>
-    public void ParryEnemy(GameObject enemy)
+    public void UpgradeAttack()
     {
-        bool parryEnemy = true;
-        foreach (GameObject e in enemiesAlreadyParriedInSwing)
-        {
-            if (e.Equals(enemy))
-            {
-                parryEnemy = false;
-            }
-        }
-        if (parryEnemy)
-        {
-            enemy.GetComponent<EnemyBehavior>().GetParried();
-            enemy.GetComponent<Health>().GetHit(damage);
-            enemiesAlreadyParriedInSwing.Add(enemy);
-        }
+        normalDamage++;
+        damage = normalDamage;
+    }
+    /// <summary>
+    /// Called in store UI, upgrades slam attack
+    /// </summary>
+    public void UpgradeSlam()
+    {
+        slamDamageMod++;
+    }
+    /// <summary>
+    /// Called in store UI, upgrades parry slow time
+    /// </summary>
+    public void UpgradeParryTime()
+    {
+        parrySlowAmount += 0.05f;
+    }
+    /// <summary>
+    /// Called in store UI, upgrades health restored on parry
+    /// </summary>
+    public void UpgradeParryHeal()
+    {
+        healthRestoredOnParry++;
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///     Animation Events           ///
@@ -143,6 +169,7 @@ public class Sword : MonoBehaviour
     /// </summary>
     private void startSwing()
     {
+        damage = normalDamage;
         transform.parent = null;
         contact = false;
         enemiesAlreadyDamagedInSwing.Clear();
@@ -160,6 +187,7 @@ public class Sword : MonoBehaviour
         }
         transform.localPosition = new Vector2(0, 0.8f);
         transform.localScale = new Vector2(1, 1);
+        GetComponentInParent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
     }
     /// <summary>
     /// Activates a numbered gameobject that detects hits on a certain frame
@@ -204,5 +232,13 @@ public class Sword : MonoBehaviour
         {
             anim.SetBool("canParry", true);
         }
+    }
+    /// <summary>
+    /// Called in slam animation, triggers downward slam
+    /// </summary>
+    private void OnSlamDown()
+    {
+        damage *= slamDamageMod;
+        Instantiate(slamCast, transform.position, Quaternion.identity);
     }
 }

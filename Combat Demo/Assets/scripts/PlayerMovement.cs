@@ -33,6 +33,8 @@ public class PlayerMovement : MonoBehaviour
         //sword = GetComponentInChildren<Sword>();
 
         Physics2D.IgnoreLayerCollision(8, 9, true);
+        Physics2D.IgnoreLayerCollision(9, 11, true);
+        Physics2D.IgnoreLayerCollision(11, 12, true);
     }
     private void Update()
     {
@@ -78,6 +80,7 @@ public class PlayerMovement : MonoBehaviour
             swordAnim.SetTrigger("parry");
             parry = false;
         }
+        swordAnim.SetBool("down", down);
     }
     /// <summary>
     /// Moves the player laterally in wither the positive or negative direction

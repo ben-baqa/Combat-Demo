@@ -54,4 +54,11 @@ public class Health : MonoBehaviour
         }
         bar.transform.localScale = new Vector2(health / healthMax, 1);
     }
+
+    public void UpgradeHealth()
+    {
+        health++;
+        healthMax++;
+        UpdateHealthBar();
+    }
 }

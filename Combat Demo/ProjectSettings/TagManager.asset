@@ -9,6 +9,7 @@ TagManager:
   - Enemy Attack
   - Player Attack
   - Interactable
+  - Ground
   layers:
   - Default
   - TransparentFX
@@ -20,9 +21,9 @@ TagManager:
   - 
   - Ignore Player
   - Player
-  - 
-  - 
-  - 
+  - Ground
+  - Enemy
+  - Collectable
   - 
   - 
   - 

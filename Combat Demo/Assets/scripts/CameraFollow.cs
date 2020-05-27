@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    public Vector2 offset;
+    public Vector2 offset, noDecayOffset;
 
     public float xMod, yMod, offsetDecayFactor, maxTimeSlow;
 
@@ -35,17 +35,18 @@ public class CameraFollow : MonoBehaviour
         }
         if (player != null)
         {
-            float offsetMod = 20;
+            float offsetMod = 0;
             if (offset.magnitude > 0.01)
             {
                 offset *= offsetDecayFactor;
-                offsetMod = 1 / (Mathf.Abs(offset.y) + 0.01f);
+                //offsetMod = 1 / (Mathf.Abs(offset.y) + 0.01f);
+                offsetMod = Mathf.Abs(offset.y) * 50;
             }
             Vector3 camPos = cam.position, pPos = player.transform.position;
             cam.position = new Vector3
-                (camPos.x - (camPos.x - pPos.x) / xMod + offset.x,
-                camPos.y - (camPos.y - pPos.y - (float)0.1) / (yMod / (1 + Mathf.Pow((player.GetComponent<Rigidbody2D>().velocity.y
-                + offsetMod) / 4, 2))) + offset.y, -10);
+                (camPos.x - (camPos.x - pPos.x) / xMod + offset.x + noDecayOffset.x,
+                camPos.y - (camPos.y - pPos.y - (float)0.1) / (yMod / (1 + Mathf.Pow((0.1f * player.GetComponent<Rigidbody2D>().velocity.y
+                + offsetMod) / 2, 2))) + offset.y + noDecayOffset.y, -10);
         }
     }
 

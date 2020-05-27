@@ -36,7 +36,7 @@ public class EnemyBehavior : MonoBehaviour
     /// </summary>
     private void AttackLoop()
     {
-        if (attackTimer > attackDelay)
+        if (attackTimer > attackDelay && rb.velocity.y == 0)
         {
             attackTimer = 0;
             anim.SetTrigger("attack");
@@ -54,8 +54,6 @@ public class EnemyBehavior : MonoBehaviour
             transform.localScale = new Vector2(-1, 1);
         }
     }
-
-
     /// <summary>
     /// Removes time slow after a given time delay
     /// </summary>
@@ -82,6 +80,7 @@ public class EnemyBehavior : MonoBehaviour
         anim.SetTrigger("oof");
         rb.velocity = Vector2.zero;
         attackTimer = -attackDelay;
+        parryable = false;
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///     Animation Events           ///
