@@ -7,6 +7,7 @@ public class DamageEnemies : MonoBehaviour
     public Vector2 hitForce;
     public GameObject burst;
 
+    private GameObject[] enemiesAlreadyDamagedInSwing;
     private Transform pPos;
     private Sword sword;
 
@@ -24,9 +25,9 @@ public class DamageEnemies : MonoBehaviour
         {
             GameObject enemy = collision.gameObject;
             enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(pPos.localScale.x * hitForce.x, hitForce.y), ForceMode2D.Impulse);
+            sword.HitEnemy(enemy);
             if (!sword.contact)
             {
-                enemy.GetComponent<Health>().GetHit(sword.damage);
                 if(burst != null)
                 {
                     GameObject burstInst = Instantiate(burst, transform.position, Quaternion.identity);

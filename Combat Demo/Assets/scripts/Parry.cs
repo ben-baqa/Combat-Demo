@@ -22,17 +22,16 @@ public class Parry : MonoBehaviour
     [System.Obsolete]
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Enemy") && collision.GetComponent<EnemyBehavior>().parryable && !sword.contact)
+        if (collision.CompareTag("Enemy") && collision.GetComponent<EnemyBehavior>().parryable)
         {
-            sword.OnParry();
-            collision.GetComponent<Animator>().SetTrigger("oof");
-            collision.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-            EnemyBehavior eB = collision.GetComponent<EnemyBehavior>();
-            eB.attackTimer = -eB.attackDelay;
-
-            GameObject burstInst = Instantiate(burst, transform.position, Quaternion.identity);
-            burstInst.transform.localScale = transform.parent.localScale;
-            burstInst.GetComponent<ParticleSystem>().scalingMode = ParticleSystemScalingMode.Shape;
+            sword.OnParry(collision.gameObject);
+            if (!sword.contact)
+            {
+                GameObject burstInst = Instantiate(burst, transform.position, Quaternion.identity);
+                burstInst.transform.localScale = transform.parent.localScale;
+                burstInst.GetComponent<ParticleSystem>().scalingMode = ParticleSystemScalingMode.Shape;
+                sword.contact = true;
+            }
         }
     }
 }

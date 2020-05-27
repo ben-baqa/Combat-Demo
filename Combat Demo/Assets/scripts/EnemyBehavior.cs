@@ -66,10 +66,22 @@ public class EnemyBehavior : MonoBehaviour
         yield return new WaitForSeconds(time);
         Time.timeScale = 1;
     }
-
+    /// <summary>
+    /// Called when the enemy hits the player
+    /// </summary>
+    /// <param name="time"></param>
     public void OnHit(float time)
     {
         StartCoroutine(CancelBulletTime(time));
+    }
+    /// <summary>
+    /// Called when the enemy is parried
+    /// </summary>
+    public void GetParried()
+    {
+        anim.SetTrigger("oof");
+        rb.velocity = Vector2.zero;
+        attackTimer = -attackDelay;
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///     Animation Events           ///

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Sword : MonoBehaviour
 {
     public Camera cam;
+    public List<GameObject> enemiesAlreadyDamagedInSwing, enemiesAlreadyParriedInSwing;
     public Vector2[] cameraShakeOffsets;
 
     public float timeSlowAmount, parrySlowAmount;
@@ -25,6 +26,8 @@ public class Sword : MonoBehaviour
         player = GameObject.Find("Player");
         pMov = player.GetComponent<PlayerMovement>();
         playerHealth = player.GetComponentInChildren<Health>();
+        enemiesAlreadyDamagedInSwing = new List<GameObject>();
+        enemiesAlreadyParriedInSwing = new List<GameObject>();
     }
 
     private void FixedUpdate()
@@ -70,7 +73,7 @@ public class Sword : MonoBehaviour
     /// <summary>
     /// Called on a successfull parry
     /// </summary>
-    public void OnParry()
+    public void OnParry(GameObject enemy)
     {
         contact = true;
         sprite.color = new Color(1, 1, 0);
@@ -78,6 +81,7 @@ public class Sword : MonoBehaviour
         anim.speed = 5;
         playerHealth.health += healthRestoredOnParry;
         playerHealth.UpdateHealthBar();
+        ParryEnemy(enemy);
         StartCoroutine(CancelParryTime());
     }
     /// <summary>
@@ -90,6 +94,47 @@ public class Sword : MonoBehaviour
         anim.speed = 1;
         Time.timeScale = 1;
     }
+    /// <summary>
+    /// Called when a damaging stroke contacts an enemy, ensures each enemy is only hit once
+    /// </summary>
+    /// <param name="enemy">the enemy to hit</param>
+    public void HitEnemy(GameObject enemy)
+    {
+        bool hitEnemy = true;
+        foreach (GameObject e in enemiesAlreadyDamagedInSwing)
+        {
+            if (e.Equals(enemy))
+            {
+                hitEnemy = false;
+            }
+        }
+        if (hitEnemy)
+        {
+            enemy.GetComponent<Health>().GetHit(damage);
+            enemiesAlreadyDamagedInSwing.Add(enemy);
+        }
+    }
+    /// <summary>
+    /// Callled when a parry stroke contacts an enemy, ensures each enemy is only parried once
+    /// </summary>
+    /// <param name="enemy">the enemy to parry</param>
+    public void ParryEnemy(GameObject enemy)
+    {
+        bool parryEnemy = true;
+        foreach (GameObject e in enemiesAlreadyParriedInSwing)
+        {
+            if (e.Equals(enemy))
+            {
+                parryEnemy = false;
+            }
+        }
+        if (parryEnemy)
+        {
+            enemy.GetComponent<EnemyBehavior>().GetParried();
+            enemy.GetComponent<Health>().GetHit(damage);
+            enemiesAlreadyParriedInSwing.Add(enemy);
+        }
+    }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///     Animation Events           ///
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -100,6 +145,8 @@ public class Sword : MonoBehaviour
     {
         transform.parent = null;
         contact = false;
+        enemiesAlreadyDamagedInSwing.Clear();
+        enemiesAlreadyParriedInSwing.Clear();
     }
     /// <summary>
     /// Called at the end of a sword swing, resets parent connection
