@@ -10,6 +10,7 @@ TagManager:
   - Player Attack
   - Interactable
   - Ground
+  - Collectable
   layers:
   - Default
   - TransparentFX

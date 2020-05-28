@@ -45,7 +45,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 1591
+    m_Bits: 1024
   swordOffset: 0.6
   bodyOffset: -0.2
-  groundCushion: 1.5
+  groundCushion: 2

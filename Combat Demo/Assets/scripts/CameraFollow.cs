@@ -14,7 +14,7 @@ public class CameraFollow : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.Find("Player");
+        player = GameObject.FindGameObjectWithTag("Player");
         cam = GetComponent<Transform>();
     }
 
@@ -47,6 +47,10 @@ public class CameraFollow : MonoBehaviour
                 (camPos.x - (camPos.x - pPos.x) / xMod + offset.x + noDecayOffset.x,
                 camPos.y - (camPos.y - pPos.y - (float)0.1) / (yMod / (1 + Mathf.Pow((0.1f * player.GetComponent<Rigidbody2D>().velocity.y
                 + offsetMod) / 2, 2))) + offset.y + noDecayOffset.y, -10);
+        }
+        else
+        {
+            player = GameObject.FindGameObjectWithTag("Player");
         }
     }
 

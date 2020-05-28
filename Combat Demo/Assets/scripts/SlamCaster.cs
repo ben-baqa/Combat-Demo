@@ -11,8 +11,8 @@ public class SlamCaster : MonoBehaviour
     
     void Start()
     {
-        Vector2 swordCast = new Vector2 (transform.position.x + swordOffset, transform.position.y - 1.4f),
-            bodyCast = new Vector2(transform.position.x + bodyOffset, transform.position.y - 1.4f);
+        Vector2 swordCast = new Vector2 (transform.position.x + swordOffset, transform.position.y - 0.8f),
+            bodyCast = new Vector2(transform.position.x + bodyOffset, transform.position.y - 0.8f);
         RaycastHit2D[] hits = Physics2D.RaycastAll(swordCast, Vector2.down,  whatIsGround);
         foreach (RaycastHit2D hit in hits)
         {
@@ -45,8 +45,9 @@ public class SlamCaster : MonoBehaviour
     /// <param name="point">Which contact point to use</param>
     private void DoSlam(Vector2 point)
     {
-        Transform pPos = GameObject.Find("Player").GetComponent<Transform>();
-        Rigidbody2D pRB = GameObject.Find("Player").GetComponent<Rigidbody2D>();
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        Transform pPos = player.GetComponent<Transform>();
+        Rigidbody2D pRB = player.GetComponent<Rigidbody2D>();
         pPos.Translate(new Vector2(0, point.y - transform.position.y + groundCushion));
         pRB.velocity = Vector2.zero;
     }

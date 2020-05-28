@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1595753843607515048
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1595753843607515050}
+  - component: {fileID: 1595753843607515049}
+  m_Layer: 0
+  m_Name: Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1595753843607515050
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1595753843607515048}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1595753843607515049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1595753843607515048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e475a07abf865c409624d6c33a8a6d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerObject: {fileID: 3229813897371796798, guid: 1397e347d679ee64383f13205f2df32f,
+    type: 3}
+  coinSpray: {fileID: 0}
+  healthRed: {fileID: 0}
+  healthMaxOutline: {fileID: 0}
+  healthRedImages:
+  - {fileID: 21300000, guid: ca8f949463c06b24fb06c884c2a51c13, type: 3}
+  - {fileID: 6998757874657595048, guid: af51110791806de4f91c4a3a5683fb3e, type: 3}
+  - {fileID: 2857604557527045217, guid: af51110791806de4f91c4a3a5683fb3e, type: 3}
+  - {fileID: -8700394113925946404, guid: af51110791806de4f91c4a3a5683fb3e, type: 3}
+  - {fileID: 288592119274348396, guid: af51110791806de4f91c4a3a5683fb3e, type: 3}
+  - {fileID: 1154709298383368163, guid: af51110791806de4f91c4a3a5683fb3e, type: 3}
+  - {fileID: 6004757238546916731, guid: af51110791806de4f91c4a3a5683fb3e, type: 3}
+  - {fileID: 420559833658462139, guid: af51110791806de4f91c4a3a5683fb3e, type: 3}
+  - {fileID: 4016321055157432695, guid: af51110791806de4f91c4a3a5683fb3e, type: 3}
+  - {fileID: -7643658635009353879, guid: af51110791806de4f91c4a3a5683fb3e, type: 3}
+  - {fileID: 4358373934850549203, guid: af51110791806de4f91c4a3a5683fb3e, type: 3}
+  - {fileID: 5036988913741748741, guid: af51110791806de4f91c4a3a5683fb3e, type: 3}
+  - {fileID: 7577312385421966725, guid: af51110791806de4f91c4a3a5683fb3e, type: 3}
+  - {fileID: -2147218905130323943, guid: af51110791806de4f91c4a3a5683fb3e, type: 3}
+  - {fileID: -8075338377277604929, guid: af51110791806de4f91c4a3a5683fb3e, type: 3}
+  - {fileID: -6275261543153645700, guid: af51110791806de4f91c4a3a5683fb3e, type: 3}
+  - {fileID: -214028911567494099, guid: af51110791806de4f91c4a3a5683fb3e, type: 3}
+  healthMaxImages:
+  - {fileID: -6233086990965929972, guid: 8608c11ae6af11d4a8d237a880953dc4, type: 3}
+  - {fileID: 8516324194101945035, guid: 8608c11ae6af11d4a8d237a880953dc4, type: 3}
+  - {fileID: -9049595289483303623, guid: 8608c11ae6af11d4a8d237a880953dc4, type: 3}
+  - {fileID: -51607962968820318, guid: 8608c11ae6af11d4a8d237a880953dc4, type: 3}
+  - {fileID: -632901247833328498, guid: 8608c11ae6af11d4a8d237a880953dc4, type: 3}
+  - {fileID: 2171766842741725178, guid: 8608c11ae6af11d4a8d237a880953dc4, type: 3}
+  - {fileID: -419841786403857531, guid: 8608c11ae6af11d4a8d237a880953dc4, type: 3}
+  - {fileID: -769516847744273928, guid: 8608c11ae6af11d4a8d237a880953dc4, type: 3}
+  - {fileID: -6755590033476185953, guid: 8608c11ae6af11d4a8d237a880953dc4, type: 3}
+  - {fileID: -8426721019121505396, guid: 8608c11ae6af11d4a8d237a880953dc4, type: 3}
+  - {fileID: -890983994018414183, guid: 8608c11ae6af11d4a8d237a880953dc4, type: 3}
+  - {fileID: -7724304481600609989, guid: 8608c11ae6af11d4a8d237a880953dc4, type: 3}
+  - {fileID: -7222077561913205332, guid: 8608c11ae6af11d4a8d237a880953dc4, type: 3}
+  - {fileID: -7891381639399090234, guid: 8608c11ae6af11d4a8d237a880953dc4, type: 3}
+  spawnLocation: {x: 0, y: 0}
+  respawnDelay: 1.5
+  upgradeLevels: 0000000000000000000000000000000000000000
+  prices: 060000000a00000014000000280000005000000096000000fa000000900100005802000020030000b004000040060000c4090000ffffff7f
+  displayHealth: 0
+  healthMax: 0
+  displayHealthMax: 0
+  damage: 0
+  slamDamageMod: 0
+  healthRestoredOnParry: 0
+  parryTime: 0
+  coins: 0

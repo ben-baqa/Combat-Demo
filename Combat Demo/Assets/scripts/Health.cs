@@ -8,6 +8,7 @@ public class Health : MonoBehaviour
 
     public float deathDelay, healthMax;
     public int health;
+    public bool invulnerable, isPlayer;
 
     private Animator anim;
 
@@ -22,12 +23,15 @@ public class Health : MonoBehaviour
     /// <param name="damage">How much damage to take</param>
     public void GetHit(int damage)
     {
-        health -= damage;
-        UpdateHealthBar();
-        anim.SetTrigger("oof");
-        if (health <= 0)
+        if (!invulnerable)
         {
-            StartCoroutine(OnDeath());
+            health -= damage;
+            UpdateHealthBar();
+            anim.SetTrigger("oof");
+            if (health <= 0)
+            {
+                StartCoroutine(OnDeath());
+            }
         }
     }
     /// <summary>
@@ -51,14 +55,21 @@ public class Health : MonoBehaviour
         if (health > healthMax)
         {
             health = (int)healthMax;
+        }else if(health < 0)
+        {
+            health = 0;
         }
-        bar.transform.localScale = new Vector2(health / healthMax, 1);
+        if (!isPlayer)
+        {
+            bar.transform.localScale = new Vector2(health / healthMax, 1);
+        }
     }
-
-    public void UpgradeHealth()
+    /// <summary>
+    /// Sets invulnerability
+    /// </summary>
+    /// <param name="b">the value to set invulnerability to</param>
+    public void setInvulnerable(bool b)
     {
-        health++;
-        healthMax++;
-        UpdateHealthBar();
+        invulnerable = b;
     }
 }

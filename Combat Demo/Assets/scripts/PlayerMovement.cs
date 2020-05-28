@@ -31,10 +31,6 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         tr = GetComponent<Transform>();
         //sword = GetComponentInChildren<Sword>();
-
-        Physics2D.IgnoreLayerCollision(8, 9, true);
-        Physics2D.IgnoreLayerCollision(9, 11, true);
-        Physics2D.IgnoreLayerCollision(11, 12, true);
     }
     private void Update()
     {
@@ -60,6 +56,8 @@ public class PlayerMovement : MonoBehaviour
         if(up & canJump)
         {
             up = false;
+            rb.velocity = Vector2.right * rb.velocity.x;
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             anim.SetTrigger("Jump");
         }
         if (right && rb.velocity.x < maxSpeed)
@@ -106,8 +104,8 @@ public class PlayerMovement : MonoBehaviour
     {
         anim.SetFloat("vX", Mathf.Abs(rb.velocity.x));
         anim.SetFloat("vY", rb.velocity.y);
-        Collider2D[] col = Physics2D.OverlapBoxAll(jumpChecker.position, jumpChecker.localScale, 0);
-        if(col.Length > 1)
+        Collider2D col = Physics2D.OverlapBox(jumpChecker.position, jumpChecker.localScale, 0, 1 << 10);
+        if(col)
         {
             canJump = true;
         }

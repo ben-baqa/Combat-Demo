@@ -6,30 +6,17 @@ using UnityEngine.UI;
 public class Storekeeper : MonoBehaviour
 {
     public GameObject canvas;
-    public float cameraOffsetGoal, offsetMovementFactor, offsetBaseMovement;
 
-    private CameraFollow cam;
-    private Pouch pouch;
-
-    private float cameraOffset;
-    private bool active;
-    // Start is called before the first frame update
+    private Manager manager;
+    
     void Start()
     {
-        cam = GameObject.Find("Camera").GetComponent<CameraFollow>();
-        pouch = GameObject.Find("Player").GetComponent<Pouch>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        manager = GameObject.Find("Manager").GetComponent<Manager>();
     }
 
     private void FixedUpdate()
     {
-        EnablePurchases(pouch.coins >= 10);
-        CameraShift();
+        ManageButtons();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -37,7 +24,6 @@ public class Storekeeper : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             canvas.SetActive(true);
-            active = true;
         }
     }
 
@@ -46,29 +32,27 @@ public class Storekeeper : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             canvas.SetActive(false);
-            active = false;
         }
     }
-
-    private void CameraShift()
-    {
-        if (active && cameraOffset < cameraOffsetGoal)
-        {
-            cameraOffset += offsetBaseMovement + offsetMovementFactor * (cameraOffsetGoal - cameraOffset);
-        }
-        else if (!active && cameraOffset > 0)
-        {
-            cameraOffset -= offsetBaseMovement + offsetMovementFactor * (cameraOffset);
-        }
-        cam.noDecayOffset = new Vector2(0, cameraOffset);
-    }
-
-    private void EnablePurchases(bool e)
+    /// <summary>
+    /// Sets the shop buttons to be active if the cost requirements are met, also sets cost displays
+    /// </summary>
+    private void ManageButtons()
     {
         Button[] buttons = GetComponentsInChildren<Button>();
-        foreach(Button b in buttons)
+        for(int i = 0; i < buttons.Length; i++)
         {
-            b.interactable = e;
+            buttons[i].interactable = manager.CostMet(i);
+            int cost = manager.getCost(i);
+            Text text = buttons[i].GetComponentInChildren<Text>();
+            if (cost < 2147483647)
+            {
+                text.text = cost.ToString();
+            }
+            else
+            {
+                text.text = "";
+            }
         }
     }
 }

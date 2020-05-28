@@ -11,16 +11,15 @@ public class Collectable : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-forcePar[0], forcePar[0]), 
+        GetComponentInParent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-forcePar[0], forcePar[0]), 
             Random.Range(forcePar[1], forcePar[2])), ForceMode2D.Impulse);
     }
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            GetComponent<Animator>().SetTrigger("collect");
-            GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
-            GetComponent<CapsuleCollider2D>().enabled = false;
+            GetComponentInParent<Animator>().SetTrigger("collect");
+            GetComponentInParent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
             GetCollected();
         }
     }
@@ -29,13 +28,8 @@ public class Collectable : MonoBehaviour
     {
         switch (type){
             case CollectableType.coin:
-                GameObject.Find("Player").GetComponent<Pouch>().coins++;
+                GameObject.Find("Manager").GetComponent<Manager>().coins++;
                 break;
         }
-    }
-
-    private void DestroySelf()
-    {
-        Destroy(gameObject);
     }
 }

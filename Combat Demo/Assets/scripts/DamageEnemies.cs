@@ -6,17 +6,8 @@ public class DamageEnemies : MonoBehaviour
 {
     public Vector2 hitForce;
     public GameObject burst;
-
-    private GameObject[] enemiesAlreadyDamagedInSwing;
-    private Transform pPos;
-    private Sword sword;
-
-    void Start()
-    {
-        pPos = transform.parent.parent;
-        pPos = GameObject.Find("Player").transform;
-        sword = GetComponentInParent<Sword>();
-    }
+    public Sword sword;
+    public Transform pPos;
 
     [System.Obsolete]
     private void OnTriggerEnter2D(Collider2D collision)

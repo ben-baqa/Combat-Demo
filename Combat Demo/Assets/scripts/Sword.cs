@@ -4,29 +4,26 @@ using UnityEngine;
 
 public class Sword : MonoBehaviour
 {
-    public Camera cam;
-    public GameObject slamCast;
+    public GameObject slamCast, player;
     public Vector2[] cameraShakeOffsets;
 
     public float timeSlowAmount, parrySlowAmount;
-    public int damage, healthRestoredOnParry, slamDamageMod;
+    public int damage, normalDamage, healthRestoredOnParry, slamDamageMod;
     public bool contact;
 
     private List<GameObject> enemiesAlreadyDamagedInSwing, enemiesAlreadyParriedInSwing;
-    private GameObject player;
+    private Camera cam;
     private Animator anim;
     private SpriteRenderer sprite;
     private PlayerMovement pMov;
     private Health playerHealth;
     private Vector2 pScale;
 
-    private int normalDamage;
-
     void Start()
     {
+        cam = GameObject.Find("Camera").GetComponent<Camera>();
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
-        player = GameObject.Find("Player");
         pMov = player.GetComponent<PlayerMovement>();
         playerHealth = player.GetComponentInChildren<Health>();
         enemiesAlreadyDamagedInSwing = new List<GameObject>();
@@ -184,10 +181,10 @@ public class Sword : MonoBehaviour
         if (player != null)
         {
             transform.parent = player.transform;
+            GetComponentInParent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
         }
         transform.localPosition = new Vector2(0, 0.8f);
         transform.localScale = new Vector2(1, 1);
-        GetComponentInParent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
     }
     /// <summary>
     /// Activates a numbered gameobject that detects hits on a certain frame
@@ -238,7 +235,22 @@ public class Sword : MonoBehaviour
     /// </summary>
     private void OnSlamDown()
     {
-        damage *= slamDamageMod;
+        damage += slamDamageMod;
         Instantiate(slamCast, transform.position, Quaternion.identity);
+        playerHealth.invulnerable = true;
+    }
+    /// <summary>
+    /// Sets the Player's health to vulnerable
+    /// </summary>
+    private void SetInvulnerable(int n)
+    {
+        if(n == 0)
+        {
+            playerHealth.invulnerable = false;
+        }
+        else
+        {
+            playerHealth.invulnerable = true;
+        }
     }
 }

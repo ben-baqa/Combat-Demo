@@ -19,7 +19,7 @@ public class EnemyBehavior : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        pPos = GameObject.Find("Player").transform;
+        pPos = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     // Update is called once per frame
@@ -45,13 +45,24 @@ public class EnemyBehavior : MonoBehaviour
         {
             attackTimer++;
         }
-        if (pPos != null && pPos.position.x > transform.position.x)
+        if (pPos != null)
         {
-            transform.localScale = new Vector2(1, 1);
+            if (pPos.position.x > transform.position.x)
+            {
+                transform.localScale = new Vector2(1, 1);
+            }
+            else
+            {
+                transform.localScale = new Vector2(-1, 1);
+            }
         }
         else
         {
-            transform.localScale = new Vector2(-1, 1);
+            GameObject buffer = GameObject.FindGameObjectWithTag("Player");
+            if(buffer != null)
+            {
+                pPos = buffer.transform;
+            }
         }
     }
     /// <summary>
