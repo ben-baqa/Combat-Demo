@@ -34,12 +34,12 @@ public class Manager : MonoBehaviour
         if (!destoryHUDonLoad)
             DontDestroyOnLoad(coinDisplay.transform.parent.gameObject);
 
-        Physics2D.IgnoreLayerCollision(8, 9, true);
-        Physics2D.IgnoreLayerCollision(9, 11, true);
-        Physics2D.IgnoreLayerCollision(9, 12, true);
-        Physics2D.IgnoreLayerCollision(11, 11, true);
-        Physics2D.IgnoreLayerCollision(11, 12, true);
-        Physics2D.IgnoreLayerCollision(12, 12, true);
+        //Physics2D.IgnoreLayerCollision(8, 9, true);
+        //Physics2D.IgnoreLayerCollision(9, 11, true);
+        //Physics2D.IgnoreLayerCollision(9, 12, true);
+        //Physics2D.IgnoreLayerCollision(11, 11, true);
+        //Physics2D.IgnoreLayerCollision(11, 12, true);
+        //Physics2D.IgnoreLayerCollision(12, 12, true);
     }
 
     private void FixedUpdate()
