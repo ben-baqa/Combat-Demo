@@ -5,8 +5,10 @@ using UnityEngine;
 public class EnemyBehavior : MonoBehaviour
 {
     public GameObject[] hurtBox;
-    public Vector2 jumpForce;
+    public GameObject roamNose;
+    public Vector2 jumpForce, moveForce, maxSpeed;
 
+    public float attackDistance, homingDistance, chaseSpeedMod;
     public int attackDelay, attackTimer;
     public bool contact, parryable;
 
@@ -14,7 +16,9 @@ public class EnemyBehavior : MonoBehaviour
     private Rigidbody2D rb;
     private Transform pPos;
 
-    public enum Enemytype {slime}
+    private float maxSpeedBase;
+
+    public enum Enemytype {slime, meelee, ranged}
     public Enemytype type;
 
     void Start()
@@ -22,31 +26,35 @@ public class EnemyBehavior : MonoBehaviour
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         pPos = GameObject.FindGameObjectWithTag("Player").transform;
+        maxSpeedBase = maxSpeed.x;
     }
 
-    // Update is called once per frame
     void Update()
     {
         anim.SetFloat("vY", rb.velocity.y);
+        anim.SetFloat("vX", Mathf.Abs(rb.velocity.x));
     }
     private void FixedUpdate()
     {
-        AttackLoop();
+        switch (type)
+        {
+            case Enemytype.slime:
+                SlimeAttackLoop();
+                break;
+            case Enemytype.meelee:
+                MeeleeActivityLoop();
+                break;
+        }
+        if(Mathf.Abs(rb.velocity.y) > maxSpeed.y)
+            rb.velocity = new Vector2(rb.velocity.x, maxSpeed.y * Mathf.Abs(rb.velocity.y) / rb.velocity.y);
+        if (Mathf.Abs(rb.velocity.x) > maxSpeed.x)
+            rb.velocity = new Vector2(maxSpeed.x * Mathf.Abs(rb.velocity.x) / rb.velocity.x, rb.velocity.y);
     }
     /// <summary>
-    /// Runs the main attack loop
+    /// Faces the player
     /// </summary>
-    private void AttackLoop()
+    private void OrientSelf()
     {
-        if (attackTimer > attackDelay && rb.velocity.y == 0)
-        {
-            attackTimer = 0;
-            anim.SetTrigger("attack");
-        }
-        else
-        {
-            attackTimer++;
-        }
         if (pPos != null)
         {
             if (pPos.position.x > transform.position.x)
@@ -61,11 +69,57 @@ public class EnemyBehavior : MonoBehaviour
         else
         {
             GameObject buffer = GameObject.FindGameObjectWithTag("Player");
-            if(buffer != null)
+            if (buffer != null)
             {
                 pPos = buffer.transform;
             }
         }
+    }
+    /// <summary>
+    /// Runs the main attack loop for slime type enemies
+    /// </summary>
+    private void SlimeAttackLoop()
+    {
+        OrientSelf();
+        if (pPos != null && Vector2.Distance(pPos.position, transform.position) < attackDistance)
+        {
+            if (attackTimer > attackDelay && rb.velocity.y == 0)
+            {
+                attackTimer = 0;
+                anim.SetTrigger("attack");
+            }
+        }
+        attackTimer++;
+    }
+    /// <summary>
+    /// Runs the attack behavior for meelee enemies
+    /// </summary>
+    private void MeeleeActivityLoop()
+    {
+        if (pPos != null )
+        {
+            float dist = Vector2.Distance(pPos.position, transform.position);
+            if(dist < attackDistance)
+            {
+                if (attackTimer > attackDelay)
+                {
+                    attackTimer = 0;
+                    anim.SetTrigger("attack");
+                }
+            }else if(dist< homingDistance)
+            {
+                maxSpeed = new Vector2(maxSpeedBase * chaseSpeedMod, maxSpeed.y);
+                OrientSelf();
+                rb.AddForce(new Vector2(moveForce.x * transform.localScale.x, moveForce.y), ForceMode2D.Force);
+            }
+            else
+            {
+                maxSpeed = new Vector2(maxSpeedBase, maxSpeed.y);
+                rb.AddForce(new Vector2(moveForce.x * transform.localScale.x, moveForce.y), ForceMode2D.Force);
+            }
+            roamNose.SetActive(dist >= homingDistance);
+        }
+        attackTimer++;
     }
     /// <summary>
     /// Called when the enemy is parried
@@ -107,14 +161,13 @@ public class EnemyBehavior : MonoBehaviour
     /// <param name="n">the index of the damage box to activate</param>
     private void ActivateHurtBox(int n)
     {
-        if(n < 0)
+        foreach (GameObject h in hurtBox)
         {
-            foreach (GameObject h in hurtBox)
-            {
-                h.SetActive(false);
-            }
-            return;
+            h.SetActive(false);
         }
+        if (n < 0)
+            return;
+
         hurtBox[n].SetActive(true);
     }
 }

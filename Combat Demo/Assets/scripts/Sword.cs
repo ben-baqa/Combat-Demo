@@ -19,7 +19,7 @@ public class Sword : MonoBehaviour
     private PlayerMovement pMov;
     private Health playerHealth;
     private Vector2 pScale;
-    private Color baseColour;
+    private Color baseColour = Color.white;
 
     void Start()
     {
@@ -30,12 +30,11 @@ public class Sword : MonoBehaviour
         playerHealth = player.GetComponentInChildren<Health>();
         enemiesAlreadyDamagedInSwing = new List<GameObject>();
         enemiesAlreadyParriedInSwing = new List<GameObject>();
-        baseColour = Color.white;
     }
 
     private void FixedUpdate()
     {
-        if(pMov == null)
+        if (pMov == null)
         {
             Destroy(gameObject);
             return;
@@ -163,7 +162,6 @@ public class Sword : MonoBehaviour
     public void UpdateSwordColour()
     {
         baseColour = Color.Lerp(Color.white, maxUpgradeColour, Mathf.Log10(10 * (normalDamage) / 14f));
-        sprite.color = baseColour;
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///     Animation Events           ///
@@ -192,6 +190,16 @@ public class Sword : MonoBehaviour
         }
         transform.localPosition = new Vector2(0, 0.8f);
         transform.localScale = new Vector2(1, 1);
+    }
+    /// <summary>
+    /// Sets the colour of the sprite, exists solely to set the colour of the sword on spawn
+    /// </summary>
+    private void SetColour()
+    {
+        if (sprite != null)
+        {
+            sprite.color = baseColour;
+        }
     }
     /// <summary>
     /// Activates a numbered gameobject that detects hits on a certain frame

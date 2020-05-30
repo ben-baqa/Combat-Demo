@@ -8,6 +8,7 @@ public class NextLevelTrigger : MonoBehaviour
     public string nextFloor;
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        SceneManager.LoadScene(nextFloor, LoadSceneMode.Single);
+        if (collision.CompareTag("Player"))
+            SceneManager.LoadScene(nextFloor, LoadSceneMode.Single);
     }
 }

@@ -21,16 +21,7 @@ AnimationClip:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.083333336
-        value: 0
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 0.125
+        time: 0.11111111
         value: 1
         inSlope: Infinity
         outSlope: Infinity
@@ -50,20 +41,17 @@ AnimationClip:
     - time: 0
       value: {fileID: 6915764325721380590, guid: 7f512f4920fa28b449a95814cc7c32a1,
         type: 3}
-    - time: 0.041666668
+    - time: 0.055555556
       value: {fileID: 6555096401168385571, guid: 7f512f4920fa28b449a95814cc7c32a1,
         type: 3}
-    - time: 0.083333336
-      value: {fileID: -1879346060102795012, guid: 7f512f4920fa28b449a95814cc7c32a1,
-        type: 3}
-    - time: 0.125
+    - time: 0.11111111
       value: {fileID: -1945226371070935617, guid: 7f512f4920fa28b449a95814cc7c32a1,
         type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
     script: {fileID: 0}
-  m_SampleRate: 24
+  m_SampleRate: 18
   m_WrapMode: 0
   m_Bounds:
     m_Center: {x: 0, y: 0, z: 0}
@@ -87,7 +75,6 @@ AnimationClip:
     pptrCurveMapping:
     - {fileID: 6915764325721380590, guid: 7f512f4920fa28b449a95814cc7c32a1, type: 3}
     - {fileID: 6555096401168385571, guid: 7f512f4920fa28b449a95814cc7c32a1, type: 3}
-    - {fileID: -1879346060102795012, guid: 7f512f4920fa28b449a95814cc7c32a1, type: 3}
     - {fileID: -1945226371070935617, guid: 7f512f4920fa28b449a95814cc7c32a1, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
@@ -114,16 +101,7 @@ AnimationClip:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.083333336
-        value: 0
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 0.125
+        time: 0.11111111
         value: 1
         inSlope: Infinity
         outSlope: Infinity
@@ -142,15 +120,15 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
-  - time: 0.125
-    functionName: startSwing
+  - time: 0.11111111
+    functionName: OnSlamDown
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.125
-    functionName: OnSlamDown
+  - time: 0.11111111
+    functionName: startSwing
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

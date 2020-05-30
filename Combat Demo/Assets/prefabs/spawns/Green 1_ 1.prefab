@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 9005678956804490461}
   m_Layer: 0
-  m_Name: Level 1_ 1
-  m_TagString: Untagged
+  m_Name: Green 1_ 1
+  m_TagString: Spawn
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

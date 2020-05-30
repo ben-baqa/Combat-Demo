@@ -52,7 +52,7 @@ public class SpawnLever : MonoBehaviour
         checkForEnemies = true;
     }
     /// <summary>
-    /// Checks if there are still enemies alive, if not, opens the door and resets lever
+    /// Checks if there are still enemies alive, if not, opens the door and resets lever, removes spawns
     /// </summary>
     private void CheckForEnemies()
     {
@@ -66,6 +66,10 @@ public class SpawnLever : MonoBehaviour
                 door.SetTrigger("open");
                 door.ResetTrigger("close");
                 checkForEnemies = false;
+
+                GameObject[] spawns = GameObject.FindGameObjectsWithTag("Spawn");
+                foreach (GameObject s in spawns)
+                    Destroy(s);
             }
         }
     }

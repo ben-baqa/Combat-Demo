@@ -323,7 +323,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hurtBox:
   - {fileID: 2655185359475201672}
+  roamNose: {fileID: 0}
   jumpForce: {x: 3, y: 8}
+  moveForce: {x: 0, y: 0}
+  maxSpeed: {x: 10, y: 20}
+  attackDistance: 7
+  homingDistance: 0
+  chaseSpeedMod: 0
   attackDelay: 80
   attackTimer: 0
   contact: 0

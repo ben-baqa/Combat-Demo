@@ -21,6 +21,8 @@ public class Manager : MonoBehaviour
     private Sword sword;
     private ManagerData data;
 
+    private bool respawnTriggered;
+
     void Start()
     {
         pHealth = GameObject.FindGameObjectWithTag("Player").GetComponent<Health>();
@@ -33,20 +35,14 @@ public class Manager : MonoBehaviour
         UpdateUpgrades();
         if (!destoryHUDonLoad)
             DontDestroyOnLoad(coinDisplay.transform.parent.gameObject);
-
-        //Physics2D.IgnoreLayerCollision(8, 9, true);
-        //Physics2D.IgnoreLayerCollision(9, 11, true);
-        //Physics2D.IgnoreLayerCollision(9, 12, true);
-        //Physics2D.IgnoreLayerCollision(11, 11, true);
-        //Physics2D.IgnoreLayerCollision(11, 12, true);
-        //Physics2D.IgnoreLayerCollision(12, 12, true);
     }
 
     private void FixedUpdate()
     {
-        if(pHealth == null)
+        if(pHealth == null && !respawnTriggered)
         {
             StartCoroutine(Respawn());
+            respawnTriggered = true;
         }
         else
         {
@@ -130,21 +126,24 @@ public class Manager : MonoBehaviour
     private IEnumerator Respawn()
     {
         yield return new WaitForSeconds(respawnDelay);
+        StopAllCoroutines();
+        respawnTriggered = false;
         GameObject pInst = Instantiate(playerObject, spawnLocation, Quaternion.identity);
         pHealth = pInst.GetComponent<Health>();
         sword = pInst.GetComponentInChildren<Sword>();
         UpdateUpgrades();
         GameObject[] coinObjects = GameObject.FindGameObjectsWithTag("Collectable");
         foreach(GameObject c in coinObjects)
-        {
             Destroy(c);
-        }
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach(GameObject e in enemies)
-        {
             Destroy(e);
+        GameObject[] spawns = GameObject.FindGameObjectsWithTag("Spawn");
+        foreach (GameObject s in spawns)
+            Destroy(s);
+        if (bossHealth != null)
+        {
+            bossHealth.ResetHealth();
         }
-        bossHealth.ResetHealth();
-        StopAllCoroutines();
     }
 }
