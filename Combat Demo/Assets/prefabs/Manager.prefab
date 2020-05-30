@@ -45,7 +45,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerObject: {fileID: 3229813897371796798, guid: 1397e347d679ee64383f13205f2df32f,
     type: 3}
-  coinSpray: {fileID: 0}
+  bossHealth: {fileID: 0}
   healthRed: {fileID: 0}
   healthMaxOutline: {fileID: 0}
   healthRedImages:
@@ -83,13 +83,9 @@ MonoBehaviour:
   - {fileID: -7891381639399090234, guid: 8608c11ae6af11d4a8d237a880953dc4, type: 3}
   spawnLocation: {x: 0, y: 0}
   respawnDelay: 1.5
+  floor: 1
   upgradeLevels: 0000000000000000000000000000000000000000
   prices: 060000000a00000014000000280000005000000096000000fa000000900100005802000020030000b004000040060000c4090000ffffff7f
   displayHealth: 0
-  healthMax: 0
   displayHealthMax: 0
-  damage: 0
-  slamDamageMod: 0
-  healthRestoredOnParry: 0
-  parryTime: 0
   coins: 0

@@ -17,12 +17,6 @@ public class SpawnLever : MonoBehaviour
         anim = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void FixedUpdate()
     {
         if (!checkForEnemies)
@@ -65,10 +59,8 @@ public class SpawnLever : MonoBehaviour
         if (checkForEnemies)
         {
             GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-            Debug.Log(enemies.Length);
             if (enemies.Length == 0)
             {
-                Debug.Log("YEET");
                 anim.SetTrigger("return");
                 anim.ResetTrigger("oof");
                 door.SetTrigger("open");

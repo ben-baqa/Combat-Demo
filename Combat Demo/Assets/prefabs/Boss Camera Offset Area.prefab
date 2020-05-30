@@ -70,6 +70,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 956b22e4645b2a8498fd4f5814004bca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraOffsetGoal: 0.35
+  cameraOffsetGoal: 10
   offsetMovementFactor: 0.05
   offsetBaseMovement: 0.02

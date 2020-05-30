@@ -7,7 +7,7 @@ public class PlayerMovement : MonoBehaviour
     public Transform jumpChecker;
     public Animator swordAnim;
 
-    public float moveForce, jumpForce, maxSpeed;
+    public float moveForce, jumpForce, maxSpeed, maxSpeedY;
     public string[] rightKeyCodes, leftKeyCodes, upKeyCodes, downKeyCodes, attackKeyCodes, parryKeyCodes;
 
     private Animator anim;
@@ -79,6 +79,10 @@ public class PlayerMovement : MonoBehaviour
             parry = false;
         }
         swordAnim.SetBool("down", down);
+        if(rb.velocity.y < - maxSpeedY)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, - maxSpeedY);
+        }
     }
     /// <summary>
     /// Moves the player laterally in wither the positive or negative direction

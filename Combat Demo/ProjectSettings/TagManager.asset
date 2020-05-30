@@ -11,6 +11,8 @@ TagManager:
   - Interactable
   - Ground
   - Collectable
+  - Boss
+  - Data
   layers:
   - Default
   - TransparentFX

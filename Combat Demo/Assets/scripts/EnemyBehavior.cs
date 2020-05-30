@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EnemyBehavior : MonoBehaviour
 {
+    public GameObject[] hurtBox;
     public Vector2 jumpForce;
 
     public int attackDelay, attackTimer;
@@ -13,7 +14,8 @@ public class EnemyBehavior : MonoBehaviour
     private Rigidbody2D rb;
     private Transform pPos;
 
-    enum type {slime}
+    public enum Enemytype {slime}
+    public Enemytype type;
 
     void Start()
     {
@@ -66,28 +68,11 @@ public class EnemyBehavior : MonoBehaviour
         }
     }
     /// <summary>
-    /// Removes time slow after a given time delay
-    /// </summary>
-    /// <param name="time">how long the time slow should last</param>
-    /// <returns></returns>
-    IEnumerator CancelBulletTime(float time)
-    {
-        yield return new WaitForSeconds(time);
-        Time.timeScale = 1;
-    }
-    /// <summary>
-    /// Called when the enemy hits the player
-    /// </summary>
-    /// <param name="time"></param>
-    public void OnHit(float time)
-    {
-        StartCoroutine(CancelBulletTime(time));
-    }
-    /// <summary>
     /// Called when the enemy is parried
     /// </summary>
     public void GetParried()
     {
+        ActivateHurtBox(-1);
         anim.SetTrigger("oof");
         rb.velocity = Vector2.zero;
         attackTimer = -attackDelay;
@@ -104,45 +89,32 @@ public class EnemyBehavior : MonoBehaviour
         Vector2 v = jumpForce;
         v.x *= transform.localScale.x;
         rb.AddForce(v, ForceMode2D.Impulse);
-    }
-    ///// <summary>
-    ///// Called in attack animation, specifies activates damage hitbox
-    ///// </summary>
-    ///// <param name="n">the index of the damage box to activate</param>
-    //private void ActivateDamageBox(int n)
-    //{
-    //    DamageBox[n].SetActive(true);
-    //}
-    ///// <summary>
-    ///// Called at the end of an attack animation, deactivates all damaging hitboxes
-    ///// </summary>
-    //private void DeactivateDamageBoxes()
-    //{
-    //    foreach(GameObject g in DamageBox)
-    //    {
-    //        g.SetActive(false);
-    //    }
-    //}
-    /// <summary>
-    /// Called at the start of an attack animation, resets contact variable so player is only hit once
-    /// </summary>
-    private void startAttack()
-    {
         contact = false;
+        parryable = true;
+        ActivateHurtBox(0);
     }
     /// <summary>
-    /// Called in attack animation, sets wether or not the enemy can currently be parried
+    /// Called at the end of an attack animation, disables damage and parrying
     /// </summary>
-    /// <param name="i"></param>
-    private void setParryable(int i)
+    private void EndAttack()
     {
-        if (i == 0)
+        parryable = false;
+        ActivateHurtBox(-1);
+    }
+    /// <summary>
+    /// Called in attack animation, specifies activates damage hitbox
+    /// </summary>
+    /// <param name="n">the index of the damage box to activate</param>
+    private void ActivateHurtBox(int n)
+    {
+        if(n < 0)
         {
-            parryable = false;
+            foreach (GameObject h in hurtBox)
+            {
+                h.SetActive(false);
+            }
+            return;
         }
-        else
-        {
-            parryable = true;
-        }
+        hurtBox[n].SetActive(true);
     }
 }

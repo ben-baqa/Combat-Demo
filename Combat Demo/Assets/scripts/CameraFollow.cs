@@ -10,12 +10,14 @@ public class CameraFollow : MonoBehaviour
 
     private GameObject player;
     private Transform cam;
+    private Vector3 camPos;
 
     // Start is called before the first frame update
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
         cam = GetComponent<Transform>();
+        camPos = cam.position;
     }
 
     /// <summary>
@@ -42,11 +44,12 @@ public class CameraFollow : MonoBehaviour
                 //offsetMod = 1 / (Mathf.Abs(offset.y) + 0.01f);
                 offsetMod = Mathf.Abs(offset.y) * 50;
             }
-            Vector3 camPos = cam.position, pPos = player.transform.position;
-            cam.position = new Vector3
-                (camPos.x - (camPos.x - pPos.x) / xMod + offset.x + noDecayOffset.x,
+            Vector3 pPos = player.transform.position;
+            camPos = new Vector3
+                (camPos.x - (camPos.x - pPos.x) / xMod,
                 camPos.y - (camPos.y - pPos.y - (float)0.1) / (yMod / (1 + Mathf.Pow((0.1f * player.GetComponent<Rigidbody2D>().velocity.y
-                + offsetMod) / 2, 2))) + offset.y + noDecayOffset.y, -10);
+                + offsetMod) / 2, 2))), -10);
+            cam.position = new Vector3(camPos.x + offset.x + noDecayOffset.x, camPos.y  + offset.y + noDecayOffset.y, -10);
         }
         else
         {

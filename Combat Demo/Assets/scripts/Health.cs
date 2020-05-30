@@ -8,7 +8,7 @@ public class Health : MonoBehaviour
 
     public float deathDelay, healthMax;
     public int health;
-    public bool invulnerable, isPlayer;
+    public bool invulnerable, isPlayer, noHurtAnim;
 
     private Animator anim;
 
@@ -27,7 +27,10 @@ public class Health : MonoBehaviour
         {
             health -= damage;
             UpdateHealthBar();
-            anim.SetTrigger("oof");
+            if (!noHurtAnim)
+            {
+                anim.SetTrigger("oof");
+            }
             if (health <= 0)
             {
                 StartCoroutine(OnDeath());
@@ -71,5 +74,12 @@ public class Health : MonoBehaviour
     public void setInvulnerable(bool b)
     {
         invulnerable = b;
+    }
+    /// <summary>
+    /// Sets the health to the maximum health
+    /// </summary>
+    public void ResetHealth()
+    {
+        health = (int)healthMax;
     }
 }

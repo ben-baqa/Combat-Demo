@@ -8,29 +8,61 @@ public class DamagePlayer : MonoBehaviour
 
     public float timeSlowAmount;
     public int damage;
+    public bool isBoss;
 
     private EnemyBehavior enemy;
+    private BossBehavior boss;
 
     void Start()
     {
-        enemy = GetComponentInParent<EnemyBehavior>();
+        if (!isBoss)
+        {
+            enemy = GetComponentInParent<EnemyBehavior>();
+        }
+        else
+        {
+            boss = GetComponentInParent<BossBehavior>();
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player") && !enemy.contact)
+        if (collision.CompareTag("Player"))
         {
-            enemy.contact = true;
+            if (!isBoss)
+            {
+                if (enemy.contact)
+                    return;
+                enemy.contact = true;
+            }
+            else
+            {
+                if (boss.contact)
+                    return;
+                boss.contact = true;
+            }
             collision.GetComponent<Health>().GetHit(damage);
             Vector2 v = pushForce;
             v.x *= transform.parent.localScale.x;
             collision.GetComponent<Rigidbody2D>().AddForce(v, ForceMode2D.Impulse);
-            Time.timeScale = 0.2f;
-            enemy.OnHit(timeSlowAmount);
+            if (gameObject.activeSelf)
+            {
+                Time.timeScale = 0.2f;
+                StartCoroutine(CancelBulletTime());
+            }
         }
         if (collision.CompareTag("Parry"))
         {
             
         }
+    }
+    /// <summary>
+    /// Cancels slowed time after given delay
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator CancelBulletTime()
+    {
+        yield return new WaitForSeconds(timeSlowAmount);
+        Time.timeScale = 1;
     }
 }

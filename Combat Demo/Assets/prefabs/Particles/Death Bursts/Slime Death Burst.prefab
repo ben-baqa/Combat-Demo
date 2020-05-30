@@ -3791,7 +3791,7 @@ ParticleSystem:
     radiusScale: 1
     collidesWith:
       serializedVersion: 2
-      m_Bits: 4294967295
+      m_Bits: 1536
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5
@@ -4827,4 +4827,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemToSpawn: {fileID: 5804320024068793765, guid: cef7ec709435f2644a6f88343ffe2496,
     type: 3}
-  numberToSpawn: 2
+  numberToSpawn: 1

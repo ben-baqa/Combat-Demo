@@ -12,7 +12,7 @@ public class DamageEnemies : MonoBehaviour
     [System.Obsolete]
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Enemy"))// && !sword.contact)
+        if (collision.gameObject.CompareTag("Enemy") || collision.CompareTag("Boss"))// && !sword.contact)
         {
             GameObject enemy = collision.gameObject;
             enemy.GetComponent<Rigidbody2D>().AddForce(new Vector2(pPos.localScale.x * hitForce.x, hitForce.y), ForceMode2D.Impulse);

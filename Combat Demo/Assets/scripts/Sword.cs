@@ -6,6 +6,7 @@ public class Sword : MonoBehaviour
 {
     public GameObject slamCast, player;
     public Vector2[] cameraShakeOffsets;
+    public Color maxUpgradeColour;
 
     public float timeSlowAmount, parrySlowAmount;
     public int damage, normalDamage, healthRestoredOnParry, slamDamageMod;
@@ -18,6 +19,7 @@ public class Sword : MonoBehaviour
     private PlayerMovement pMov;
     private Health playerHealth;
     private Vector2 pScale;
+    private Color baseColour;
 
     void Start()
     {
@@ -28,7 +30,7 @@ public class Sword : MonoBehaviour
         playerHealth = player.GetComponentInChildren<Health>();
         enemiesAlreadyDamagedInSwing = new List<GameObject>();
         enemiesAlreadyParriedInSwing = new List<GameObject>();
-        normalDamage = damage;
+        baseColour = Color.white;
     }
 
     private void FixedUpdate()
@@ -76,6 +78,10 @@ public class Sword : MonoBehaviour
     /// </summary>
     public void OnParry(GameObject enemy)
     {
+        if(playerHealth.health == 0)
+        {
+            return;
+        }
         bool parryEnemy = true;
         foreach (GameObject e in enemiesAlreadyParriedInSwing)
         {
@@ -93,6 +99,31 @@ public class Sword : MonoBehaviour
             playerHealth.health += healthRestoredOnParry;
             playerHealth.UpdateHealthBar();
             enemy.GetComponent<EnemyBehavior>().GetParried();
+            enemiesAlreadyParriedInSwing.Add(enemy);
+        }
+    }
+    /// <summary>
+    /// Called on a successfull Boss parry
+    /// </summary>
+    public void OnBossParry(GameObject enemy)
+    {
+        bool parryEnemy = true;
+        foreach (GameObject e in enemiesAlreadyParriedInSwing)
+        {
+            if (e.Equals(enemy))
+            {
+                parryEnemy = false;
+            }
+        }
+        if (parryEnemy)
+        {
+            sprite.color = new Color(1, 1, 0);
+            Time.timeScale = 0.3f;
+            StartCoroutine(CancelParryTime());
+            anim.speed = 5;
+            playerHealth.health += healthRestoredOnParry;
+            playerHealth.UpdateHealthBar();
+            enemy.GetComponent<BossBehavior>().GetParried();
             enemiesAlreadyParriedInSwing.Add(enemy);
         }
     }
@@ -126,37 +157,13 @@ public class Sword : MonoBehaviour
             enemiesAlreadyDamagedInSwing.Add(enemy);
         }
     }
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///     Store Buttons           ///
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// <summary>
-    /// Called by store UI, upgrades attack
+    /// Updates the sword colour to match the updgrade level
     /// </summary>
-    public void UpgradeAttack()
+    public void UpdateSwordColour()
     {
-        normalDamage++;
-        damage = normalDamage;
-    }
-    /// <summary>
-    /// Called in store UI, upgrades slam attack
-    /// </summary>
-    public void UpgradeSlam()
-    {
-        slamDamageMod++;
-    }
-    /// <summary>
-    /// Called in store UI, upgrades parry slow time
-    /// </summary>
-    public void UpgradeParryTime()
-    {
-        parrySlowAmount += 0.05f;
-    }
-    /// <summary>
-    /// Called in store UI, upgrades health restored on parry
-    /// </summary>
-    public void UpgradeParryHeal()
-    {
-        healthRestoredOnParry++;
+        baseColour = Color.Lerp(Color.white, maxUpgradeColour, Mathf.Log10(10 * (normalDamage) / 14f));
+        sprite.color = baseColour;
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///     Animation Events           ///
@@ -177,7 +184,7 @@ public class Sword : MonoBehaviour
     /// </summary>
     private void endSwing()
     {
-        sprite.color = Color.white;
+        sprite.color = baseColour;
         if (player != null)
         {
             transform.parent = player.transform;

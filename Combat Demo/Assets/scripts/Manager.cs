@@ -6,28 +6,33 @@ using UnityEngine.UI;
 public class Manager : MonoBehaviour
 {
     public GameObject playerObject;
+    public Health bossHealth;
     public Image healthRed, healthMaxOutline;
     private Text coinDisplay;
     public Sprite[] healthRedImages, healthMaxImages;
     public Vector2 spawnLocation;
 
     public float respawnDelay;
-    /// <summary>
-    /// incrementally keeps track of upgrade levels. Order: Damage, Slam, Parry health, Parry time, health
-    /// </summary>
-    public int[] upgradeLevels, prices;
+    public int floor;
     public int displayHealth, displayHealthMax, coins;
+    public bool destoryHUDonLoad;
 
     private Health pHealth;
     private Sword sword;
+    private ManagerData data;
 
     void Start()
     {
-        pHealth = GameObject.Find("Player").GetComponent<Health>();
-        sword = GameObject.Find("Player").GetComponentInChildren<Sword>();
+        pHealth = GameObject.FindGameObjectWithTag("Player").GetComponent<Health>();
+        sword = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<Sword>();
         coinDisplay = GameObject.Find("HUD").GetComponentInChildren<Text>();
-        DontDestroyOnLoad(coinDisplay.transform.parent.gameObject);
-        DontDestroyOnLoad(transform.gameObject);
+        healthRed = GameObject.Find("Player Health").GetComponent<Image>();
+        healthMaxOutline = GameObject.Find("Player Max Health").GetComponent<Image>();
+        data = GameObject.FindGameObjectWithTag("Data").GetComponent<ManagerData>();
+        coins = data.coins;
+        UpdateUpgrades();
+        if (!destoryHUDonLoad)
+            DontDestroyOnLoad(coinDisplay.transform.parent.gameObject);
 
         Physics2D.IgnoreLayerCollision(8, 9, true);
         Physics2D.IgnoreLayerCollision(9, 11, true);
@@ -48,6 +53,7 @@ public class Manager : MonoBehaviour
             UpdateHealthBar();
         }
         coinDisplay.text = coins.ToString();
+        data.coins = coins;
     }
     /// <summary>
     /// Called by shop UI, makes purchase and call function to update upgrades
@@ -55,8 +61,8 @@ public class Manager : MonoBehaviour
     /// <param name="n">the index of which attribute to upgrade</param>
     public void Upgrade(int n)
     {
-        coins -= prices[upgradeLevels[n]];
-        upgradeLevels[n]++;
+        coins -= data.prices[data.upgradeLevels[n]];
+        data.upgradeLevels[n]++;
         UpdateUpgrades();
     }
     /// <summary>
@@ -64,15 +70,16 @@ public class Manager : MonoBehaviour
     /// </summary>
     private void UpdateUpgrades()
     {
-        sword.normalDamage = upgradeLevels[0] + 1;
-        sword.slamDamageMod = upgradeLevels[1];
-        sword.healthRestoredOnParry = upgradeLevels[2];
-        sword.parrySlowAmount = 0.3f + upgradeLevels[3] * 0.05f;
-        if(upgradeLevels[4] + 3 > pHealth.healthMax)
+        sword.normalDamage = data.upgradeLevels[0] + 1;
+        sword.UpdateSwordColour();
+        sword.slamDamageMod = data.upgradeLevels[1];
+        sword.healthRestoredOnParry = data.upgradeLevels[2];
+        sword.parrySlowAmount = 0.3f + data.upgradeLevels[3] * 0.05f;
+        if(data.upgradeLevels[4] + 3 > pHealth.healthMax)
         {
             pHealth.health++;
         }
-        pHealth.healthMax = 3 + upgradeLevels[4];
+        pHealth.healthMax = 3 + data.upgradeLevels[4];
     }
     /// <summary>
     /// Checks if the cost requirements are met to buy a particular item
@@ -81,7 +88,11 @@ public class Manager : MonoBehaviour
     /// <returns></returns>
     public bool CostMet(int n)
     {
-        if(coins >= prices[upgradeLevels[n]])
+        if(floor < 4 && data.upgradeLevels[n] >= floor * 3)
+        {
+            return false;
+        }
+        if(coins >= data.prices[data.upgradeLevels[n]])
         {
             return true;
         }
@@ -94,7 +105,7 @@ public class Manager : MonoBehaviour
     /// <returns>the cost of the upgrade</returns>
     public int getCost(int n)
     {
-        return prices[upgradeLevels[n]];
+        return data.prices[data.upgradeLevels[n]];
     }
     /// <summary>
     /// Updates the player health bar
@@ -121,8 +132,10 @@ public class Manager : MonoBehaviour
         yield return new WaitForSeconds(respawnDelay);
         GameObject pInst = Instantiate(playerObject, spawnLocation, Quaternion.identity);
         pHealth = pInst.GetComponent<Health>();
-        GameObject[] coins = GameObject.FindGameObjectsWithTag("Collectable");
-        foreach(GameObject c in coins)
+        sword = pInst.GetComponentInChildren<Sword>();
+        UpdateUpgrades();
+        GameObject[] coinObjects = GameObject.FindGameObjectsWithTag("Collectable");
+        foreach(GameObject c in coinObjects)
         {
             Destroy(c);
         }
@@ -131,6 +144,7 @@ public class Manager : MonoBehaviour
         {
             Destroy(e);
         }
+        bossHealth.ResetHealth();
         StopAllCoroutines();
     }
 }
