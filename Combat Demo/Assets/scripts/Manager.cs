@@ -132,6 +132,7 @@ public class Manager : MonoBehaviour
         pHealth = pInst.GetComponent<Health>();
         sword = pInst.GetComponentInChildren<Sword>();
         UpdateUpgrades();
+        pHealth.health = (int)pHealth.healthMax;
         GameObject[] coinObjects = GameObject.FindGameObjectsWithTag("Collectable");
         foreach(GameObject c in coinObjects)
             Destroy(c);

@@ -65,6 +65,7 @@ MonoBehaviour:
   - 1
   - 0
   - 1
+  worth: 1
 --- !u!1 &5804320024068793765
 GameObject:
   m_ObjectHideFlags: 0

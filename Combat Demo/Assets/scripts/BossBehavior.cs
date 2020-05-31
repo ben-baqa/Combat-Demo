@@ -5,8 +5,9 @@ using UnityEngine;
 public class BossBehavior : MonoBehaviour
 {
     public GameObject[] hurtBox;
-    public Vector2 jumpForce;
+    public Vector2 moveForce;
 
+    public float animSpeed;
     public int attackDelay, attackTimer;
     public bool contact, parryable;
 
@@ -25,12 +26,20 @@ public class BossBehavior : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        AttackLoop();
+        switch (type)
+        {
+            case Bosstype.kingSlime:
+                SlimeAttackLoop();
+                break;
+            case Bosstype.Ent:
+                EntActivity();
+                break;
+        }
     }
     /// <summary>
-    /// Runs the main attack loop
+    /// Runs the main attack loop for the king slime
     /// </summary>
-    private void AttackLoop()
+    private void SlimeAttackLoop()
     {
         if (attackTimer > attackDelay && rb.velocity.y == 0)
         {
@@ -60,6 +69,20 @@ public class BossBehavior : MonoBehaviour
                 pPos = buffer.transform;
             }
         }
+    }
+
+    private void EntActivity()
+    {
+        if (Mathf.Abs(rb.velocity.x) > 1)
+        {
+            rb.AddForce(new Vector2(moveForce.x * transform.localScale.x, moveForce.y), ForceMode2D.Force);
+        }
+        else
+        {
+            rb.AddForce(new Vector2(moveForce.x * transform.localScale.x, moveForce.y), ForceMode2D.Impulse);
+        }
+        animSpeed = Mathf.Abs(rb.velocity.x);
+        anim.SetFloat("speed", animSpeed);
     }
     /// <summary>
     /// Removes time slow after a given time delay
@@ -98,7 +121,7 @@ public class BossBehavior : MonoBehaviour
     /// </summary>
     private void Jump()
     {
-        Vector2 v = jumpForce;
+        Vector2 v = moveForce;
         v.x *= transform.localScale.x;
         rb.AddForce(v, ForceMode2D.Impulse);
         contact = false;

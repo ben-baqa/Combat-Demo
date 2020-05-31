@@ -335,7 +335,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hurtBox:
   - {fileID: 2260351703756225609}
-  jumpForce: {x: 25, y: 50}
+  moveForce: {x: 25, y: 50}
   attackDelay: 30
   attackTimer: 0
   contact: 0

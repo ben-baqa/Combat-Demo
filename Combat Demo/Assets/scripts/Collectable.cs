@@ -8,6 +8,7 @@ public class Collectable : MonoBehaviour
     public CollectableType type;
 
     public float[] forcePar;
+    public int worth;
     // Start is called before the first frame update
     void Start()
     {
@@ -28,7 +29,7 @@ public class Collectable : MonoBehaviour
     {
         switch (type){
             case CollectableType.coin:
-                GameObject.Find("Manager").GetComponent<Manager>().coins++;
+                GameObject.Find("Manager").GetComponent<Manager>().coins += worth;
                 break;
         }
     }

@@ -339,7 +339,7 @@ MonoBehaviour:
     type: 3}
   bar: {fileID: 3851524964415996449}
   deathDelay: 0.07
-  healthMax: 12
+  healthMax: 21
   health: 0
   invulnerable: 0
   isPlayer: 0
