@@ -81,5 +81,6 @@ public class Health : MonoBehaviour
     public void ResetHealth()
     {
         health = (int)healthMax;
+        UpdateHealthBar();
     }
 }

@@ -15,19 +15,13 @@ public class BossHydra : MonoBehaviour
 
     private float spawnHealthAmount;
     private int spawnNumber;
-    // Start is called before the first frame update
+    
     void Start()
     {
         anim = GetComponent<Animator>();
         boss = GetComponent<BossBehavior>();
         health = GetComponent<Health>();
         spawnHealthAmount = health.healthMax / (numberOfSpawns + 1f);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     private void FixedUpdate()
@@ -41,5 +35,10 @@ public class BossHydra : MonoBehaviour
             anim.SetTrigger("bud");
             spawnNumber++;
         }
+    }
+
+    public void Reset()
+    {
+        spawnNumber = 0;
     }
 }

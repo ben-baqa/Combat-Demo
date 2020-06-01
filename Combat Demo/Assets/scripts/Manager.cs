@@ -132,7 +132,7 @@ public class Manager : MonoBehaviour
         pHealth = pInst.GetComponent<Health>();
         sword = pInst.GetComponentInChildren<Sword>();
         UpdateUpgrades();
-        pHealth.health = (int)pHealth.healthMax;
+        pHealth.ResetHealth();
         GameObject[] coinObjects = GameObject.FindGameObjectsWithTag("Collectable");
         foreach(GameObject c in coinObjects)
             Destroy(c);
@@ -145,6 +145,12 @@ public class Manager : MonoBehaviour
         if (bossHealth != null)
         {
             bossHealth.ResetHealth();
+            bossHealth.GetComponent<Animator>().SetTrigger("reset");
+            BossHydra hydra = bossHealth.GetComponent<BossHydra>();
+            if(hydra != null)
+            {
+                hydra.Reset();
+            }
         }
     }
 }

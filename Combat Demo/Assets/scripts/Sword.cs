@@ -6,6 +6,7 @@ public class Sword : MonoBehaviour
 {
     public GameObject slamCast, player;
     public Vector2[] cameraShakeOffsets;
+    public Vector2 stabForce;
     public Color maxUpgradeColour;
 
     public float timeSlowAmount, parrySlowAmount;
@@ -50,7 +51,8 @@ public class Sword : MonoBehaviour
     /// <param name="n">which inspector defined vector to apply as offset</param>
     private void CameraShake(int n)
     {
-        cam.GetComponent<CameraFollow>().offset = cameraShakeOffsets[n] * Time.timeScale;
+        Vector2 v = new Vector2(cameraShakeOffsets[n].x * transform.localScale.x, cameraShakeOffsets[n].y);
+        cam.GetComponent<CameraFollow>().offset = v * Time.timeScale;
     }
     /// <summary>
     /// Called in DamageEnemies when a swing hits something hittable, slows time and changes sword colour
@@ -267,5 +269,13 @@ public class Sword : MonoBehaviour
         {
             playerHealth.invulnerable = true;
         }
+    }
+    /// <summary>
+    /// Applies atab force to player rigidbody
+    /// </summary>
+    private void ApplyStabForce()
+    {
+        pMov.ApplyForce(new Vector2(stabForce.x * transform.localScale.x, stabForce.y));
+        playerHealth.invulnerable = true;
     }
 }

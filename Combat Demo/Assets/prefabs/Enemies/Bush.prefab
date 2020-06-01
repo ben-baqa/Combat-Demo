@@ -159,7 +159,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pushForce: {x: 6, y: 8}
   timeSlowAmount: 0.02
-  damage: 3
+  damage: 2
   isBoss: 0
 --- !u!1 &3851524965582787672
 GameObject:
@@ -315,7 +315,7 @@ MonoBehaviour:
   jumpForce: {x: 10, y: 0}
   moveForce: {x: 0, y: 0}
   maxSpeed: {x: 10, y: 20}
-  attackDistance: 6
+  attackDistance: 4
   homingDistance: 0
   chaseSpeedMod: 0
   attackDelay: 100

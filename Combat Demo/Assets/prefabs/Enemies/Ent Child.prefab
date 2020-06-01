@@ -150,7 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pushForce: {x: 6, y: 8}
   timeSlowAmount: 0.02
-  damage: 5
+  damage: 3
   isBoss: 0
 --- !u!1 &4542222368816764768
 GameObject:
@@ -229,7 +229,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pushForce: {x: 6, y: 8}
   timeSlowAmount: 0.02
-  damage: 5
+  damage: 3
   isBoss: 0
 --- !u!1 &8078934330267327698
 GameObject:
@@ -669,5 +669,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pushForce: {x: 6, y: 8}
   timeSlowAmount: 0.02
-  damage: 5
+  damage: 3
   isBoss: 0

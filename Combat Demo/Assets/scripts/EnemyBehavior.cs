@@ -17,6 +17,7 @@ public class EnemyBehavior : MonoBehaviour
     private Transform pPos;
 
     private float maxSpeedBase;
+    private bool limitXSpeed;
 
     public enum Enemytype {slime, meelee, ranged}
     public Enemytype type;
@@ -27,12 +28,13 @@ public class EnemyBehavior : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         pPos = GameObject.FindGameObjectWithTag("Player").transform;
         maxSpeedBase = maxSpeed.x;
+        limitXSpeed = true;
     }
 
     void Update()
     {
         anim.SetFloat("vY", rb.velocity.y);
-        anim.SetFloat("vX", Mathf.Abs(rb.velocity.x));
+        anim.SetFloat("vX", Mathf.Abs(rb.velocity.x) + 0.1f);
     }
     private void FixedUpdate()
     {
@@ -47,7 +49,7 @@ public class EnemyBehavior : MonoBehaviour
         }
         if(Mathf.Abs(rb.velocity.y) > maxSpeed.y)
             rb.velocity = new Vector2(rb.velocity.x, maxSpeed.y * Mathf.Abs(rb.velocity.y) / rb.velocity.y);
-        if (Mathf.Abs(rb.velocity.x) > maxSpeed.x)
+        if (limitXSpeed && Mathf.Abs(rb.velocity.x) > maxSpeed.x)
             rb.velocity = new Vector2(maxSpeed.x * Mathf.Abs(rb.velocity.x) / rb.velocity.x, rb.velocity.y);
     }
     /// <summary>
@@ -110,16 +112,30 @@ public class EnemyBehavior : MonoBehaviour
             {
                 maxSpeed = new Vector2(maxSpeedBase * chaseSpeedMod, maxSpeed.y);
                 OrientSelf();
-                rb.AddForce(new Vector2(moveForce.x * transform.localScale.x, moveForce.y), ForceMode2D.Force);
+                Move();
             }
             else
             {
                 maxSpeed = new Vector2(maxSpeedBase, maxSpeed.y);
-                rb.AddForce(new Vector2(moveForce.x * transform.localScale.x, moveForce.y), ForceMode2D.Force);
+                Move();
             }
             roamNose.SetActive(dist >= homingDistance);
         }
         attackTimer++;
+    }
+    /// <summary>
+    /// Applies movement force
+    /// </summary>
+    private void Move()
+    {
+        if (Mathf.Abs(rb.velocity.x) > maxSpeed.x / 2)
+        {
+            rb.AddForce(new Vector2(moveForce.x * transform.localScale.x, moveForce.y), ForceMode2D.Force);
+        }
+        else
+        {
+            rb.AddForce(new Vector2(moveForce.x * transform.localScale.x, moveForce.y), ForceMode2D.Impulse);
+        }
     }
     /// <summary>
     /// Called when the enemy is parried
@@ -130,6 +146,7 @@ public class EnemyBehavior : MonoBehaviour
         anim.SetTrigger("oof");
         rb.velocity = Vector2.zero;
         attackTimer = -attackDelay;
+        contact = true;
         parryable = false;
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -148,12 +165,24 @@ public class EnemyBehavior : MonoBehaviour
         ActivateHurtBox(0);
     }
     /// <summary>
+    /// Sets the value of limitXSpeed
+    /// </summary>
+    /// <param name="n"></param>
+    private void SetVXConstraints(int n)
+    {
+        if (n == 0)
+            limitXSpeed = false;
+        else
+            limitXSpeed = true;
+    }
+    /// <summary>
     /// Called at the end of an attack animation, disables damage and parrying
     /// </summary>
     private void EndAttack()
     {
         parryable = false;
         ActivateHurtBox(-1);
+        limitXSpeed = true;
     }
     /// <summary>
     /// Called in attack animation, specifies activates damage hitbox

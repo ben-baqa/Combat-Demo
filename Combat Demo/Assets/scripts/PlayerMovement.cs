@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public Transform jumpChecker;
+    public Transform jumpChecker, stabChecker;
     public Animator swordAnim;
 
-    public float moveForce, jumpForce, maxSpeed, maxSpeedY;
+    public float moveForce, jumpForce, maxSpeed, maxSpeedY, downHoldTime;
     public string[] rightKeyCodes, leftKeyCodes, upKeyCodes, downKeyCodes, attackKeyCodes, parryKeyCodes;
 
     private Animator anim;
@@ -16,13 +16,14 @@ public class PlayerMovement : MonoBehaviour
     //private Sword sword;
 
     private int lastPressed;
-    private bool right, left, up, down, attack, parry, canJump;
+    private bool right, left, up, down, downReleased,attack, parry, canJump;
 
 
     private void OnDrawGizmos()
     {
         Gizmos.color = new Color(1, 0.5f, 0.5f, 0.7f);
         Gizmos.DrawCube(jumpChecker.position, jumpChecker.localScale);
+        Gizmos.DrawCube(stabChecker.position, stabChecker.localScale);
     }
 
     private void Start()
@@ -60,14 +61,12 @@ public class PlayerMovement : MonoBehaviour
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             anim.SetTrigger("Jump");
         }
+        CheckForStab();
         if (right && rb.velocity.x < maxSpeed)
-        {
             lateralMovement(1);
-        }
         if (left && rb.velocity.x > -maxSpeed)
-        {
             lateralMovement(-1);
-        }
+
         if (attack)
         {
             swordAnim.SetTrigger("attack");
@@ -79,10 +78,11 @@ public class PlayerMovement : MonoBehaviour
             parry = false;
         }
         swordAnim.SetBool("down", down);
+        if(down && downReleased)
+            StartCoroutine(TimeOutDownInput());
+
         if(rb.velocity.y < - maxSpeedY)
-        {
             rb.velocity = new Vector2(rb.velocity.x, - maxSpeedY);
-        }
     }
     /// <summary>
     /// Moves the player laterally in wither the positive or negative direction
@@ -135,7 +135,7 @@ public class PlayerMovement : MonoBehaviour
         right &= GetKeyUps(rightKeyCodes);
         left &= GetKeyUps(leftKeyCodes);
         up &= GetKeyUps(upKeyCodes);
-        down &= GetKeyUps(downKeyCodes);
+        downReleased |= GetKeyUps(downKeyCodes);
         attack &= GetKeyUps(attackKeyCodes) & !Input.GetMouseButtonUp(0);
         parry &= GetKeyUps(parryKeyCodes) & !Input.GetMouseButtonUp(1);
     }
@@ -170,6 +170,44 @@ public class PlayerMovement : MonoBehaviour
             }
         }
         return true;
+    }
+    /// <summary>
+    /// Resets down input after a given delay
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator TimeOutDownInput()
+    {
+        yield return new WaitForSeconds(downHoldTime);
+        if (downReleased)
+        {
+            down = false;
+            downReleased = false;
+            StopAllCoroutines();
+        }
+    }
+    /// <summary>
+    /// appleis a force to the rigidbody as an impulse
+    /// </summary>
+    /// <param name="force"></param>
+    public void ApplyForce(Vector2 force)
+    {
+        rb.AddForce(force, ForceMode2D.Impulse);
+    }
+    /// <summary>
+    /// Checks if its safe to stab, prevents wall clipping
+    /// </summary>
+    private void CheckForStab()
+    {
+        Collider2D[] cols = Physics2D.OverlapBoxAll(stabChecker.position, stabChecker.localScale, 0, 1 << 10);
+        foreach (Collider2D col in cols)
+        {
+            if (col.CompareTag("Ground"))
+            {
+                swordAnim.SetBool("dir", false);
+                return;
+            }
+        }
+        swordAnim.SetBool("dir", right || left);
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///     Animation Events           ///
