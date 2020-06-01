@@ -7,7 +7,7 @@ public class BossBehavior : MonoBehaviour
     public GameObject[] hurtBox;
     public Vector2 moveForce;
 
-    public float animSpeed;
+    public float animSpeed, attackDistance;
     public int attackDelay, attackTimer;
     public bool contact, parryable;
 
@@ -15,7 +15,9 @@ public class BossBehavior : MonoBehaviour
     private Rigidbody2D rb;
     private Transform pPos;
 
-    public enum Bosstype { kingSlime, Ent }
+    private bool roam;
+
+    public enum Bosstype { kingSlime, Ent, Medusa }
     public Bosstype type;
 
     void Start()
@@ -33,6 +35,9 @@ public class BossBehavior : MonoBehaviour
                 break;
             case Bosstype.Ent:
                 EntActivity();
+                break;
+            case Bosstype.Medusa:
+                MedusaActivity();
                 break;
         }
     }
@@ -70,7 +75,9 @@ public class BossBehavior : MonoBehaviour
             }
         }
     }
-
+    /// <summary>
+    /// Runs the main attack loop for the ent
+    /// </summary>
     private void EntActivity()
     {
         if (Mathf.Abs(rb.velocity.x) > 1)
@@ -83,6 +90,50 @@ public class BossBehavior : MonoBehaviour
         }
         animSpeed = Mathf.Abs(rb.velocity.x);
         anim.SetFloat("speed", animSpeed);
+    }
+    /// <summary>
+    /// Runs the main attack loop for the medusa
+    /// </summary>
+    private void MedusaActivity()
+    {
+        if (pPos != null)
+        {
+            if (!roam)
+            {
+                if (pPos.position.x > transform.position.x)
+                    transform.localScale = new Vector2(1, 1);
+                else
+                    transform.localScale = new Vector2(-1, 1);
+            }
+            if (Vector2.Distance(pPos.position, transform.position) < attackDistance)
+            {
+                roam = false;
+                if (attackTimer > attackDelay)
+                {
+                    attackTimer = 0;
+                    anim.SetTrigger("attack");
+                }
+                attackTimer++;
+            }
+            else
+            {
+                roam = true;
+                if (Mathf.Abs(rb.velocity.x) > 1)
+                    rb.AddForce(new Vector2(moveForce.x * transform.localScale.x, moveForce.y), ForceMode2D.Force);
+                else
+                    rb.AddForce(new Vector2(moveForce.x * transform.localScale.x, moveForce.y), ForceMode2D.Impulse);
+                animSpeed = Mathf.Abs(rb.velocity.x);
+                anim.SetFloat("speed", animSpeed);
+            }
+        }
+        else
+        {
+            GameObject buffer = GameObject.FindGameObjectWithTag("Player");
+            if (buffer != null)
+            {
+                pPos = buffer.transform;
+            }
+        }
     }
     /// <summary>
     /// Removes time slow after a given time delay
@@ -110,7 +161,8 @@ public class BossBehavior : MonoBehaviour
         ActivateHurtBox(-1);
         anim.SetTrigger("oof");
         rb.velocity = Vector2.zero;
-        //attackTimer = -attackDelay;
+        if(type == Bosstype.Medusa)
+            attackTimer = - 2 * attackDelay;
         parryable = false;
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
